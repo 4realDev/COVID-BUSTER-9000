@@ -84,6 +84,23 @@
 		<!-- Template plugin activities -->
 		<!-- Remember to add your plug-in Activities to the Android Manifest file. -->
 		<activity
+			android:name="no.nordicsemi.android.nrftoolbox.hygrometer.HygrometerActivity"
+			android:icon="@drawable/ic_hygrometer_feature"
+			android:label="@string/hygrometer_feature_title" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+
+				<category android:name="no.nordicsemi.android.nrftoolbox.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="no.nordicsemi.android.nrftoolbox.hygrometer.settings.SettingsActivity"
+			android:label="@string/hygrometer_settings_title" />
+		<service
+			android:name="no.nordicsemi.android.nrftoolbox.hygrometer.HygrometerService"
+			android:label="@string/hygrometer_feature_title" />
+
+		<activity
 			android:name="no.nordicsemi.android.nrftoolbox.template.TemplateActivity"
 			android:icon="@drawable/ic_template_feature"
 			android:label="@string/template_feature_title" >
