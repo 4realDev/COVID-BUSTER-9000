@@ -1,4 +1,4 @@
-# MSE TSM MobCom Project PROJECT_NAME
+# MSE TSM MobCom Project COVID BUSTER 2000
 
 ## Agile Board
 * Team: https://trello.com/tsm_mobcomco2team
