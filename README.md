@@ -6,7 +6,7 @@
 ## Team
 * [Dennis Briner](https://github.com/TheMen4ce)
 * [Stefan Wick](https://github.com/wickdev)
-* [STUDENT_NAME](https://github.com/USER_NAME)
+* [Vladimir Brazhnik](https://github.com/4realDev)
 
 ## Docs
 * [Slides](Docs/Slides.pdf) (PDF)
