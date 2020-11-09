@@ -4,7 +4,7 @@
 * https://trello.com/PROJECT_NAME/
 
 ## Team
-* [STUDENT_NAME](https://github.com/USER_NAME)
+* [Dennis Briner](https://github.com/TheMen4ce)
 * [STUDENT_NAME](https://github.com/USER_NAME)
 * [STUDENT_NAME](https://github.com/USER_NAME)
 
