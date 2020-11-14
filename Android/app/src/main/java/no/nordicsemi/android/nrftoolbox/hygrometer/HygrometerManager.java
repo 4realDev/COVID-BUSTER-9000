@@ -149,4 +149,8 @@ public class HygrometerManager extends BatteryManager<HygrometerManagerCallbacks
 			.fail((device, status) -> log(Log.WARN, "Failed to set heater state"))
 			.enqueue();
 	}
+
+	public static UUID getUUID(){
+		return HUMIDITY_SERVICE_UUID;
+	}
 }
