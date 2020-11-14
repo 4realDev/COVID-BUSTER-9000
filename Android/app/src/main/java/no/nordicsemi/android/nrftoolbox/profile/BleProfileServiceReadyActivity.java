@@ -642,7 +642,7 @@ public abstract class BleProfileServiceReadyActivity<E extends BleProfileService
 	 */
 	private void showDeviceScanningDialog(final UUID filter) {
 		final ScannerFragment dialog = ScannerFragment.getInstance(filter);
-		dialog.show(getSupportFragmentManager(), "scan_fragment");
+		dialog.show(getSupportFragmentManager(), "scan_fragment");	// CO2 -> Place where ScannerFragment is shown, maybe remove with own Fragment
 	}
 
 	/**
