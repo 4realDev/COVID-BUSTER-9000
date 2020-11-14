@@ -29,6 +29,7 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import no.nordicsemi.android.nrftoolbox.hygrometer.HygrometerActivity;
 
 public class SplashscreenActivity extends Activity {
 	/** Splash screen duration time in milliseconds */
@@ -41,7 +42,7 @@ public class SplashscreenActivity extends Activity {
 
 		// Jump to SensorsActivity after DELAY milliseconds 
 		new Handler().postDelayed(() -> {
-			final Intent newIntent = new Intent(SplashscreenActivity.this, FeaturesActivity.class);
+			final Intent newIntent = new Intent(SplashscreenActivity.this, HygrometerActivity.class);
 			newIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
 			// Handle NFC message, if app was opened using NFC AAR record
