@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import androidx.annotation.NonNull;
@@ -38,18 +39,24 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 import no.nordicsemi.android.nrftoolbox.R;
+import no.nordicsemi.android.nrftoolbox.hygrometer.HygrometerManager;
+import no.nordicsemi.android.nrftoolbox.hygrometer.HygrometerService;
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat;
 import no.nordicsemi.android.support.v18.scanner.ScanCallback;
 import no.nordicsemi.android.support.v18.scanner.ScanFilter;
@@ -82,6 +89,8 @@ public class ScannerFragment extends DialogFragment {
 	private ParcelUuid uuid;
 
 	private boolean scanning = false;
+
+	private AlertDialog dialog;
 
 	public static ScannerFragment getInstance(final UUID uuid) {
 		final ScannerFragment fragment = new ScannerFragment();
@@ -161,7 +170,7 @@ public class ScannerFragment extends DialogFragment {
 		listview.setAdapter(adapter = new DeviceListAdapter());
 
 		builder.setTitle(R.string.scanner_title);
-		final AlertDialog dialog = builder.setView(dialogView).create();
+		/*final AlertDialog*/ dialog = builder.setView(dialogView).create();
 		listview.setOnItemClickListener((parent, view, position, id) -> {
 			stopScan();
 			dialog.dismiss();
@@ -276,6 +285,21 @@ public class ScannerFragment extends DialogFragment {
 
 		@Override
 		public void onBatchScanResults(@NonNull final List<ScanResult> results) {
+			for(ScanResult sr : results) {
+
+				Log.d(this.getClass().getName(), "ScanResult Device: " + sr.getDevice().toString());
+				Log.d(this.getClass().getName(), "ScanResult UUID: " + sr.getScanRecord().getServiceUuids().toString());
+
+				// UUID is visualized with Brackets "[6b750001-006c-4f1b-8e32-a20d9d19aa13]"
+				if (sr.getScanRecord().getServiceUuids().toString().equals("[" + HygrometerManager.getUUID().toString() + "]")) {
+					Log.d(this.getClass().getName(), "DIRECTLY CONNECTED TO THE DEVICE " + sr.getDevice() + " WITH THE UUID " + sr.getScanRecord().getServiceUuids().toString());
+
+					listener.onDeviceSelected(sr.getDevice(), sr.getScanRecord() != null ? sr.getScanRecord().getDeviceName() : null);
+
+					stopScan();
+					dialog.dismiss();
+				}
+			}
 			adapter.update(results);
 		}
 
