@@ -1,0 +1,81 @@
+Index: 07/Android/MyBleCentralApp/app/src/main/java/org/tamberg/myblecentralapp/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- 07/Android/MyBleCentralApp/app/src/main/java/org/tamberg/myblecentralapp/MainActivity.java	(revision Local Version)
++++ 07/Android/MyBleCentralApp/app/src/main/java/org/tamberg/myblecentralapp/MainActivity.java	(revision Shelved Version)
+@@ -33,6 +33,8 @@
+ 
+ import java.util.ArrayList;
+ import java.util.List;
++import java.util.Timer;
++import java.util.TimerTask;
+ import java.util.UUID;
+ 
+ import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
+@@ -52,6 +54,7 @@
+         UUID.fromString("00002A39-0000-1000-8000-00805f9b34fb"); // W
+ 
+     private boolean mIsConnected = false;
++    private boolean mIsScanning = false;
+     private BluetoothLeScanner mScanner;
+     private BluetoothDevice mBluetoothDevice;
+     private BluetoothGatt mBluetoothGatt;
+@@ -217,9 +220,35 @@
+         return enabled;
+     }
+ 
++    private void scanRepeatedly() {
++        Timer t = new Timer();
++        t.scheduleAtFixedRate(new TimerTask() {
++                                  @Override
++                                  public void run() {
++                                      //Called each time when 5000 milliseconds (5 second) (the period parameter)
++                                      if(mIsScanning) {
++                                          Log.d(TAG, "Already scanning! Chill!");
++                                          return;
++                                      }
++                                      if(!mIsConnected) {
++                                          Log.d(TAG, "I'm not connected. Thus scanning...");
++                                          scan();
++                                      } else {
++                                          Log.d(TAG, "Already connected. No need to do anything...");
++                                      }
++                                  }
++
++                              },
++                //Set how long before to start calling the TimerTask (in milliseconds)
++                0,
++                //Set the amount of time between each execution (in milliseconds)
++                5000);
++    }
++
+     private void scan() {
+         Assert.check(mHandler != null);
+         Assert.check(mScanner != null);
++        if(mIsScanning) { return; }
+         List<ScanFilter> filters = new ArrayList<>();
+         //filters.add(new ScanFilter.Builder().setDeviceAddress("C9:1E:3F:18:61:9D").build());
+         filters.add(new ScanFilter.Builder().setServiceUuid(
+@@ -231,9 +260,11 @@
+             public void run() {
+                 Log.d(TAG, "stop scan");
+                 mScanner.stopScan(mScanCallback);
++                mIsScanning = false;
+             }
+         }, SCAN_PERIOD_MS);
+         Log.d(TAG, "start scan");
++        mIsScanning = true;
+         mScanner.startScan(filters, settings, mScanCallback);
+     }
+ 
+@@ -272,7 +303,7 @@
+         int requestCode, String[] permissions, int[] grantResults)
+     {
+         if (isLocationEnabled()) {
+-            scan(); // TODO: move to button handler
++            scanRepeatedly();
+         } else {
+             Log.d(TAG, "Location not enabled");
+         }
