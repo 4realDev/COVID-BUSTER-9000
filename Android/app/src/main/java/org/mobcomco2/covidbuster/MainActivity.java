@@ -31,6 +31,8 @@ import org.mobcomco2.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
@@ -41,15 +43,17 @@ public class MainActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD_MS = 10000;
     // Bluetooth SIG registered 16-bit "UUIDs" have base UUID 0000xxxx-0000-1000-8000-00805f9b34fb
     private static final UUID HRM_SERVICE_UUID =
-        UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
+            UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
     private static final UUID HEART_RATE_MEASUREMENT_CHARACTERISTIC_UUID =
-        UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb"); // N
+            UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb"); // N
     private static final UUID BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID =
-        UUID.fromString("00002A38-0000-1000-8000-00805f9b34fb"); // R
+            UUID.fromString("00002A38-0000-1000-8000-00805f9b34fb"); // R
     private static final UUID HEART_RATE_CONTROL_POINT_CHARACTERISTIC_UUID =
-        UUID.fromString("00002A39-0000-1000-8000-00805f9b34fb"); // W
+            UUID.fromString("00002A39-0000-1000-8000-00805f9b34fb"); // W
+
 
     private boolean mIsConnected = false;
+    private boolean mIsScanning = false;
     private BluetoothLeScanner mScanner;
     private BluetoothDevice mBluetoothDevice;
     private BluetoothGatt mBluetoothGatt;
@@ -85,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onCharacteristicChanged(
-            BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
+                BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
         {
             Log.d(TAG, "onCharacteristicChanged, UUID = " +  characteristic.getUuid());
             UUID uuid = characteristic.getUuid();
@@ -99,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onCharacteristicRead(
-            final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, int status)
+                final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, int status)
         {
             Log.d(TAG, "onCharacteristicRead, UUID = " +
-                characteristic.getUuid() + ", status = " + status);
+                    characteristic.getUuid() + ", status = " + status);
             if (status == GATT_SUCCESS) {
                 UUID uuid = characteristic.getUuid();
                 if (uuid.equals(BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID)) {
@@ -114,21 +118,21 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onCharacteristicWrite(
-            BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status)
+                BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status)
         {
             Log.d(TAG, "onCharacteristicWrite, UUID = " +
-                characteristic.getUuid() + ",\nstatus = " + status);
+                    characteristic.getUuid() + ",\nstatus = " + status);
         }
 
         private void init (final BluetoothGatt gatt) {
             // TODO: implement a queue or use a 3rd party BLE library
             readCharacteristic(gatt, HRM_SERVICE_UUID,
-                BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID, 100);
+                    BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID, 100);
             writeCharacteristic(gatt, HRM_SERVICE_UUID,
-                HEART_RATE_CONTROL_POINT_CHARACTERISTIC_UUID,
-                0, BluetoothGattCharacteristic.FORMAT_UINT16, 500);
+                    HEART_RATE_CONTROL_POINT_CHARACTERISTIC_UUID,
+                    0, BluetoothGattCharacteristic.FORMAT_UINT16, 500);
             setCharacteristicNotification(gatt, HRM_SERVICE_UUID,
-                HEART_RATE_MEASUREMENT_CHARACTERISTIC_UUID, 1000);
+                    HEART_RATE_MEASUREMENT_CHARACTERISTIC_UUID, 1000);
         }
 
         @Override
@@ -141,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void readCharacteristic(
-        final BluetoothGatt gatt, final UUID serviceUuid, final UUID characteristicUuid, int delayMs)
+            final BluetoothGatt gatt, final UUID serviceUuid, final UUID characteristicUuid, int delayMs)
     {
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -149,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothGattService gattService = gatt.getService(serviceUuid);
                 if (gattService != null) {
                     BluetoothGattCharacteristic characteristic =
-                        gattService.getCharacteristic(characteristicUuid);
+                            gattService.getCharacteristic(characteristicUuid);
                     if (characteristic != null) {
                         gatt.readCharacteristic(characteristic);
                     }
@@ -159,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void writeCharacteristic(
-        final BluetoothGatt gatt, final UUID serviceUuid, final UUID characteristicUuid,
-        final int value, final int formatType, int delayMs)
+            final BluetoothGatt gatt, final UUID serviceUuid, final UUID characteristicUuid,
+            final int value, final int formatType, int delayMs)
     {
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -168,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothGattService gattService = gatt.getService(serviceUuid);
                 if (gattService != null) {
                     BluetoothGattCharacteristic characteristic =
-                        gattService.getCharacteristic(characteristicUuid);
+                            gattService.getCharacteristic(characteristicUuid);
                     if (characteristic != null) {
                         characteristic.setValue(value, formatType, 0);
                         gatt.writeCharacteristic(characteristic);
@@ -179,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setCharacteristicNotification(
-        final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, int delayMs)
+            final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, int delayMs)
     {
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -195,10 +199,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setCharacteristicNotification(
-        final BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid, int delayMs)
+            final BluetoothGatt gatt, UUID serviceUuid, UUID characteristicUuid, int delayMs)
     {
         setCharacteristicNotification(
-            gatt, gatt.getService(serviceUuid).getCharacteristic(characteristicUuid), delayMs);
+                gatt, gatt.getService(serviceUuid).getCharacteristic(characteristicUuid), delayMs);
     }
 
     private boolean isLocationEnabled() {
@@ -207,12 +211,37 @@ public class MainActivity extends AppCompatActivity {
         int locationMode = 0;
         try { // 19+
             locationMode = Settings.Secure.getInt(
-                this.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                    this.getContentResolver(), Settings.Secure.LOCATION_MODE);
             enabled = (locationMode != Settings.Secure.LOCATION_MODE_OFF);
         } catch (Settings.SettingNotFoundException e) {
             enabled = false;
         }
         return enabled;
+    }
+
+    private void scanRepeatedly() {
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+                                  @Override
+                                  public void run() {
+                                      //Called each time when 5000 milliseconds (5 second) (the period parameter)
+                                      if(mIsScanning) {
+                                          Log.d(TAG, "Already scanning!");
+                                          return;
+                                      }
+                                      if(!mIsConnected) {
+                                          Log.d(TAG, "I'm not connected. Thus scanning...");
+                                          scan();
+                                      } else {
+                                          Log.d(TAG, "Already connected. No need to do anything...");
+                                      }
+                                  }
+
+                              },
+                //Set how long before to start calling the TimerTask (in milliseconds)
+                0,
+                //Set the amount of time between each execution (in milliseconds)
+                5000);
     }
 
     private void scan() {
@@ -221,17 +250,19 @@ public class MainActivity extends AppCompatActivity {
         List<ScanFilter> filters = new ArrayList<>();
         //filters.add(new ScanFilter.Builder().setDeviceAddress("C9:1E:3F:18:61:9D").build());
         filters.add(new ScanFilter.Builder().setServiceUuid(
-            new ParcelUuid(HRM_SERVICE_UUID)).build()); // 21+
+                new ParcelUuid(HRM_SERVICE_UUID)).build()); // 21+
         ScanSettings settings = (new ScanSettings.Builder().setScanMode(
-            ScanSettings.SCAN_MODE_LOW_LATENCY)).build();
+                ScanSettings.SCAN_MODE_LOW_LATENCY)).build();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "stop scan");
                 mScanner.stopScan(mScanCallback);
+                mIsScanning = false;
             }
         }, SCAN_PERIOD_MS);
         Log.d(TAG, "start scan");
+        mIsScanning = true;
         mScanner.startScan(filters, settings, mScanCallback);
     }
 
@@ -245,13 +276,13 @@ public class MainActivity extends AppCompatActivity {
         if (hasBle) {
             Log.d(TAG, "BLE available");
             BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+                    (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
             BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
             if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
                 Log.d(TAG, "BLE enabled");
                 mScanner = bluetoothAdapter.getBluetoothLeScanner();
                 String[] permissions = new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                        Manifest.permission.ACCESS_FINE_LOCATION
                 };
                 int requestCode = 0;
                 ActivityCompat.requestPermissions(MainActivity.this, permissions, requestCode);
@@ -267,10 +298,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult (
-        int requestCode, String[] permissions, int[] grantResults)
+            int requestCode, String[] permissions, int[] grantResults)
     {
         if (isLocationEnabled()) {
-            scan(); // TODO: move to button handler
+            scanRepeatedly();
         } else {
             Log.d(TAG, "Location not enabled");
         }
@@ -292,9 +323,9 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "mBluetoothDevice.connectGatt");
                     try {
                         mBluetoothGatt = mBluetoothDevice.connectGatt(
-                            MainActivity.this, autoConnect, mGattCallback);
+                                MainActivity.this, autoConnect, mGattCallback);
                         Log.d(TAG, "mBluetoothGatt = " + (mBluetoothGatt != null ?
-                            mBluetoothGatt.toString() : "null"));
+                                mBluetoothGatt.toString() : "null"));
                     } catch (Exception e) {
                         Log.d(TAG, e.toString());
                     }
