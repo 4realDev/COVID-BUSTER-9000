@@ -1,4 +1,4 @@
-package org.mobcomco2.myblecentralapp;
+package org.mobcomco2.covidbuster;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
