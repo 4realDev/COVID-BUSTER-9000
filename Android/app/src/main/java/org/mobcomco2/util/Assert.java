@@ -1,4 +1,4 @@
-package org.tamberg.util;
+package org.mobcomco2.util;
 
 public class Assert {
     private Assert() {}

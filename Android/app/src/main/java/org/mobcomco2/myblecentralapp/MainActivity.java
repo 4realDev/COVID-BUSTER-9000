@@ -1,6 +1,4 @@
-// https://tamberg.mit-license.org/
-
-package org.tamberg.myblecentralapp;
+package org.mobcomco2.myblecentralapp;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -29,7 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.tamberg.util.Assert;
+import org.mobcomco2.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;

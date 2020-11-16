@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "org.tamberg.myblecentralapp"
+        applicationId "org.mobcomco2.myblecentralapp"
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
