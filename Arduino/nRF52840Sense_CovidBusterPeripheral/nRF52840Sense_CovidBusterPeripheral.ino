@@ -123,7 +123,7 @@ void startAdvertising() {
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial) { delay(10); } // only if usb connected
+  // This line will only be visible when the serial monitor is started before starting the board
   Serial.println("Setup");
 
   sht31.begin(0x44);
