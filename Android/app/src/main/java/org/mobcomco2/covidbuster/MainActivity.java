@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD_MS = 10000;
     // Bluetooth SIG registered 16-bit "UUIDs" have base UUID 0000xxxx-0000-1000-8000-00805f9b34fb
     private static final UUID HRM_SERVICE_UUID =
-            UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb");
+            UUID.fromString("6b750001-006c-4f1b-8e32-a20d9d19aa13");
     private static final UUID HEART_RATE_MEASUREMENT_CHARACTERISTIC_UUID =
-            UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb"); // N
+            UUID.fromString("6b750002-006c-4f1b-8e32-a20d9d19aa13"); // N
     private static final UUID BODY_SENSOR_LOCATION_CHARACTERISTIC_UUID =
             UUID.fromString("00002A38-0000-1000-8000-00805f9b34fb"); // R
     private static final UUID HEART_RATE_CONTROL_POINT_CHARACTERISTIC_UUID =
