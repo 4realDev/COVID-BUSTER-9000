@@ -10,6 +10,7 @@
 * [Vladimir Brazhnik](https://github.com/4realDev)
 
 ## Docs
+* [Google-Slides](https://docs.google.com/presentation/d/1LQ77AjYsA2AsoAlaf-1ryAkffRm060hJ0MQgu7ak1nI/edit#slide=id.g723630543_3_0)
 * [Slides](Docs/Slides.pdf) (PDF)
 * [Video](Docs/Video.mp4) (MP4)
 
