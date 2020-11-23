@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // TODO remove this test call
+        backendService.readCo2MeasurementsForRoom(1);
+
         Log.d(TAG, "onCreate");
         boolean hasBle = getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
         if (hasBle) {
