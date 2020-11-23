@@ -23,6 +23,8 @@ import android.util.Log;
 import com.co2team.covidbuster.model.SensorData;
 import com.co2team.covidbuster.service.BackendService;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean mIsScanning = false;
     private BluetoothLeScanner mScanner;
-    private HandlerThread scanningThread = new HandlerThread("ScanningThread");
+    private final HandlerThread scanningThread = new HandlerThread("ScanningThread");
 
-    private BackendService backendService = new BackendService();
+    private final BackendService backendService = new BackendService();
 
-    private ScanCallback mScanCallback = new ScanCallback() {
+    private final ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(
-            int requestCode, String[] permissions, int[] grantResults) {
+            int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
         if (isLocationEnabled()) {
             scan();
         } else {
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         boolean enabled;
         int locationMode;
         try { // 19+
+            //noinspection deprecation
             locationMode = Settings.Secure.getInt(
                     this.getContentResolver(), Settings.Secure.LOCATION_MODE);
             enabled = (locationMode != Settings.Secure.LOCATION_MODE_OFF);
