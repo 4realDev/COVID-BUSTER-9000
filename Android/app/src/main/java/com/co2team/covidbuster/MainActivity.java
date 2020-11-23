@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<ScanFilter> filters = new ArrayList<>();
-        filters.add(new ScanFilter.Builder().setDeviceName("CO2 SENSOR").build());
+        filters.add(new ScanFilter.Builder().setDeviceName("COVID BUSTER PERIPHERAL").build());
         ScanSettings settings = (new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED)).build();
 
         Log.d(TAG, "start scan");

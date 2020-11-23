@@ -11,7 +11,7 @@
 /*****       PUBLIC VARIABLES      *****/
 /***************************************/
 
-#define DEVICENAME "CO2 SENSOR"
+#define DEVICENAME "COVID BUSTER PERIPHERAL"
 
 //To be changed
 #define ROOMNAME "ZL6.0"
