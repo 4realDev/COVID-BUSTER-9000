@@ -1,14 +1,10 @@
-// Custom Humidity BLE peripheral. Copyright (c) Thomas Amberg, FHNW
-
-// Based on https://github.com/adafruit/Adafruit_nRF52_Arduino
-// /tree/master/libraries/Bluefruit52Lib/examples/Peripheral
-// Copyright (c) Adafruit.com, all rights reserved.
-
-// Licensed under the MIT license, see LICENSE or
-// https://choosealicense.com/licenses/mit/
-
 #include <bluefruit.h>
+
 #include "Adafruit_SHT31.h"
+#include "SparkFun_SCD30_Arduino_Library.h"
+#include "SPI.h"
+
+#include "hwa_co2sensor.h"
 
 // Custom peripheral, use 128-bit UUIDs
 // 6b75fded-006c-4f1b-8e32-a20d9d19aa13 GUID =>
@@ -30,6 +26,21 @@ BLEService humidityService = BLEService(humidityServiceUuid);
 BLECharacteristic humidityMeasurementCharacteristic = BLECharacteristic(humidityMeasurementCharacteristicUuid);
 BLECharacteristic temperatureMeasurementCharacteristic = BLECharacteristic(temperatureMeasurementCharacteristicUuid);
 BLECharacteristic heaterStateCharacteristic = BLECharacteristic(heaterStateCharacteristicUuid);
+
+
+#define MANUFACTURER_ID   0x004C 
+ 
+// AirLocate UUID: E2C56DB5-DFFB-48D2-B060-D0F5A71096E0
+uint8_t beaconUuid[16] = 
+{ 
+  0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 
+  0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0, 
+};
+ 
+// A valid Beacon packet consists of the following information:
+// UUID, Major, Minor, RSSI @ 1M
+BLEBeacon beacon(beaconUuid, 0x0000, 0x0000, -54);
+ 
 
 void connectedCallback(uint16_t connectionHandle) {
   char centralName[32] = { 0 };
@@ -122,23 +133,79 @@ void startAdvertising() {
 }
 
 void setup() {
-  Serial.begin(115200);
-  // This line will only be visible when the serial monitor is started before starting the board
-  Serial.println("Setup");
+    Serial.begin(115200);
+    // This line will only be visible when the serial monitor is started before starting the board
+    Serial.println("Setup");
 
-  sht31.begin(0x44);
-  sht31.heater(true);
+    hwa_co2sensor_init();
 
-  Bluefruit.begin();
-  Bluefruit.setName("COVID BUSTER SERVICE");
-  Bluefruit.Periph.setConnectCallback(connectedCallback);
-  Bluefruit.Periph.setDisconnectCallback(disconnectedCallback);
 
-  setupHumidityService();
-  startAdvertising();
+    sht31.begin(0x44);
+    sht31.heater(true);
+
+    Bluefruit.begin();
+    Bluefruit.setTxPower(0);
+    Bluefruit.setName("BLETest");
+    beacon.setManufacturer(MANUFACTURER_ID);
+    startAdv();
+    Serial.println("Broadcasting beacon, open your beacon app to test");
+ 
+    // Suspend Loop() to save power, since we didn't have any code there
+    suspendLoop();
+    // Bluefruit.Periph.setConnectCallback(connectedCallback);
+    // Bluefruit.Periph.setDisconnectCallback(disconnectedCallback);
+
+    // setupHumidityService();
+    // startAdvertising();
 }
 
+void startAdv(void)
+{  
+  // Advertising packet
+  // Set the beacon payload using the BLEBeacon class populated
+  // earlier in this example
+  Bluefruit.Advertising.setBeacon(beacon);
+ 
+  // Secondary Scan Response packet (optional)
+  // Since there is no room for 'Name' in Advertising packet
+  Bluefruit.ScanResponse.addName();
+  
+  /* Start Advertising
+   * - Enable auto advertising if disconnected
+   * - Timeout for fast mode is 30 seconds
+   * - Start(timeout) with timeout = 0 will advertise forever (until connected)
+   * 
+   * Apple Beacon specs
+   * - Type: Non connectable, undirected
+   * - Fixed interval: 100 ms -> fast = slow = 100 ms
+   */
+  //Bluefruit.Advertising.setType(BLE_GAP_ADV_TYPE_ADV_NONCONN_IND);
+  Bluefruit.Advertising.restartOnDisconnect(true);
+  Bluefruit.Advertising.setInterval(160, 160);    // in unit of 0.625 ms
+  Bluefruit.Advertising.setFastTimeout(30);      // number of seconds in fast mode
+  Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds  
+}
+ 
+
 void loop() {
+  if (hwa_co2sensor_dataAvailable())
+  {
+    Serial.print("co2(ppm):");
+    Serial.print(hwa_co2sensor_getCO2());
+
+    Serial.print(" temp(C):");
+    Serial.print(hwa_co2sensor_getTemperature(), 1);
+
+    Serial.print(" humidity(%):");
+    Serial.print(hwa_co2sensor_getHumidity(), 1);
+
+    Serial.println();
+  }
+  else
+    Serial.println("Waiting for new data123");
+
+  delay(500);
+  
   if (Bluefruit.connected()) {
     float h = sht31.readHumidity();
     int h2 = h * 100.0; // fixed precision
