@@ -4,12 +4,12 @@ public class SensorData {
     /**
      * Id of the room as it is set for each peripheral in config.h
      */
-    int roomId;
-    int co2Value;
-    int temperatureValue;
-    int humidityValue;
-    int batteryValue;
-    int rssiAt1m;
+    private final int roomId;
+    private final int co2Value;
+    private final int temperatureValue;
+    private final int humidityValue;
+    private final int batteryValue;
+    private final int rssiAt1m;
 
     public SensorData(int roomId, int co2Value, int temperatureValue, int humidityValue, int batteryValue, int rssiAt1m){
         this.roomId = roomId;
@@ -34,49 +34,24 @@ public class SensorData {
         return roomId;
     }
 
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
-    }
-
     public int getCo2Value(){
         return co2Value;
-    }
-
-    public void setCo2Value(int co2Value) {
-        this.co2Value = co2Value;
     }
 
     public int getTemperatureValue() {
         return temperatureValue;
     }
 
-    public void setTemperatureValue(int temperatureValue) {
-        this.temperatureValue = temperatureValue;
-    }
-
     public int getHumidityValue() {
         return humidityValue;
-    }
-
-    public void setHumidityValue(int humidityValue) {
-        this.humidityValue = humidityValue;
     }
 
     public int getBatteryValue() {
         return batteryValue;
     }
 
-    public void setBatteryValue(int batteryValue) {
-        this.batteryValue = batteryValue;
-    }
-
-
     public int getRssiAt1m() {
         return rssiAt1m;
-    }
-
-    public void setRssiAt1m(int rssiAt1m) {
-        this.rssiAt1m = rssiAt1m;
     }
 
 }
