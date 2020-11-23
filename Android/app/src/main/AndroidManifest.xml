@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.mobcomco2.covidbuster">
+    package="com.co2team.covidbuster">
 
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>--><!-- 23+ -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/><!-- 29+, works for all -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/><!-- or false -->
 
@@ -14,8 +13,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CovidBuster2000App">
-        <activity android:name="org.mobcomco2.covidbuster.MainActivity">
+        android:theme="@style/Theme.CovidBuster">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
