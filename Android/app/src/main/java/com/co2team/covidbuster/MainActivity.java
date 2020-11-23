@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.co2team.covidbuster.model.SensorData;
+import com.co2team.covidbuster.service.BackendService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +34,20 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothLeScanner mScanner;
     private HandlerThread scanningThread = new HandlerThread("ScanningThread");
 
+    private BackendService backendService = new BackendService();
+
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
             ScanRecord scanRecord = result.getScanRecord();
-            if(scanRecord.getManufacturerSpecificData().size() >= 0) {
+            if (scanRecord.getManufacturerSpecificData().size() >= 0) {
                 SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
 
-                Log.i(TAG, "Scanning Room: " + sensorData.getRoomValue() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() +  " Battery: " + sensorData.getBatteryValue());
+                Log.i(TAG, "Scanning Room: " + sensorData.getRoomValue() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
+
+                // upload to backend
+                backendService.uploadCo2Measurement(sensorData.getCo2Value());
             }
         }
 
@@ -82,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void scan() {
-        if(mIsScanning) {
+        if (mIsScanning) {
             Log.d(TAG, "Already scanning ...");
             return;
         }
@@ -101,9 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult (
-            int requestCode, String[] permissions, int[] grantResults)
-    {
+    public void onRequestPermissionsResult(
+            int requestCode, String[] permissions, int[] grantResults) {
         if (isLocationEnabled()) {
             scan();
         } else {
