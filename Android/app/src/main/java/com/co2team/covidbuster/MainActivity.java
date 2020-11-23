@@ -46,10 +46,9 @@ public class MainActivity extends AppCompatActivity {
             if (scanRecord.getManufacturerSpecificData().size() >= 0) {
                 SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
 
-                Log.i(TAG, "Scanning Room: " + sensorData.getRoomValue() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
+                Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
 
-                // upload to backend
-                backendService.uploadCo2Measurement(sensorData.getCo2Value());
+                backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
             }
         }
 

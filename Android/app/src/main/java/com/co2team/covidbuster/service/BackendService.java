@@ -16,11 +16,11 @@ public class BackendService {
     private static final String TAG = BackendService.class.getSimpleName();
     private final OkHttpClient client = new OkHttpClient();
 
-    private static final String UPDATE_URL = "https://api.thingspeak.com/update?api_key=7G0T8JBRR8M6OAPD&field1=";
+    private static final String UPDATE_URL = "https://api.thingspeak.com/update?api_key=7G0T8JBRR8M6OAPD&field";
 
-    public void uploadCo2Measurement(int co2ppm) {
+    public void uploadCo2Measurement(int co2ppm, int roomId) {
         Request request = new Request.Builder()
-                .url(UPDATE_URL + co2ppm)
+                .url(UPDATE_URL + roomId + "=" + co2ppm)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
