@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsScanning = false;
     private BluetoothLeScanner mScanner;
     private HandlerThread scanningThread = new HandlerThread("ScanningThread");
-    private SensorData sensorData = new SensorData(0, 0, 0, 0, 0, 0);
 
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             super.onScanResult(callbackType, result);
             ScanRecord scanRecord = result.getScanRecord();
             if(scanRecord.getManufacturerSpecificData().size() >= 0) {
-                sensorData = sensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
+                SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
 
                 Log.i(TAG, "Scanning Room: " + sensorData.getRoomValue() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() +  " Battery: " + sensorData.getBatteryValue());
             }

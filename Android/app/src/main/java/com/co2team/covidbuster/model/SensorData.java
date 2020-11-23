@@ -17,6 +17,16 @@ public class SensorData {
         this.rssiAt1m = rssiAt1m;
     }
 
+    public static SensorData processPayload(byte[] payload){
+        int room = payload[4];
+        int co2 = (int) ((payload[7] << 8)| (payload[6] & 0xFF));
+        int temperature = payload[8];
+        int humidity = payload[9];
+        int battery = payload[10];
+        int rssi = payload[11];
+        return new SensorData(room, co2, temperature, humidity, battery, rssi);
+    }
+
     public int getRoomValue() {
         return roomValue;
     }
@@ -64,16 +74,6 @@ public class SensorData {
 
     public void setRssiAt1m(int rssiAt1m) {
         this.rssiAt1m = rssiAt1m;
-    }
-
-    public SensorData processPayload(byte[] payload){
-        int room = payload[4];
-        int co2 = (int) ((payload[7] << 8)| (payload[6] & 0xFF));
-        int temperature = payload[8];
-        int humidity = payload[9];
-        int battery = payload[10];
-        int rssi = payload[11];
-        return new SensorData(room, co2, temperature, humidity, battery, rssi);
     }
 
 }
