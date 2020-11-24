@@ -16,12 +16,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.provider.Settings;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.co2team.covidbuster.model.SensorData;
 import com.co2team.covidbuster.service.BackendService;
+import com.co2team.covidbuster.ui.TabAdapter;
+import com.co2team.covidbuster.ui.currentroom.CurrentRoomFragment;
+import com.co2team.covidbuster.ui.roomlist.RoomListFragment;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +68,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+
+        TabAdapter adapter = new TabAdapter(getSupportFragmentManager());
+        adapter.addFragment(RoomListFragment.Companion.newInstance(), "Room List");
+        adapter.addFragment(CurrentRoomFragment.Companion.newInstance(), "Current Room");
+
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+            @Override
+            public void onPageSelected(int position) { }
+
+            @Override
+            public void onPageScrollStateChanged(int state) { }
+        });
 
         // TODO remove this test call
         backendService.readCo2MeasurementsForRoom(1);
