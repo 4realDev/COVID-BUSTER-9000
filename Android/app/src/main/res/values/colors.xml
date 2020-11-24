@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="colorPrimary">@color/covidbuster_fragment_background</color>
+    <color name="colorPrimaryDark">@color/covidbuster_dark_background</color>
+    <color name="colorAccent">@color/covidbuster_green</color>
+
+    <color name="covidbuster_green">#51cf95</color>
+    <color name="covidbuster_purple">#8941af</color>
+    <color name="covidbuster_blue">#4878c0</color>
+    <color name="covidbuster_light_blue">#3ea3ab</color>
+    <color name="covidbuster_dark_background">#1e1d23</color>
+    <color name="covidbuster_fragment_background">#25252f</color>
+    <color name="covidbuster_unselected">#40a4ac</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +20,5 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
 </resources>
