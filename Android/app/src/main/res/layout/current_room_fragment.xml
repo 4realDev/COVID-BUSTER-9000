@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:id="@+id/current_room_fragment"
     tools:context=".ui.currentroom.CurrentRoomFragment">
 
     <TextView
@@ -10,5 +12,12 @@
         android:layout_height="match_parent"
         android:text="CURRENT ROOM FRAGMENT"
         android:textColor="@color/white" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/history_fragment_button"
+        android:text="HISTORY"
+        android:layout_gravity="center"/>
 
 </FrameLayout>
