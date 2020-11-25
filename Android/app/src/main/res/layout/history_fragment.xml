@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context=".ui.history.HistoryFragment">
 
     <TextView
@@ -10,5 +11,10 @@
         android:layout_height="match_parent"
         android:text="HISTORY FRAGMENT"
         android:textColor="@color/white" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/co2LineChart"/>
 
 </FrameLayout>
