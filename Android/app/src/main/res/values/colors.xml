@@ -13,6 +13,12 @@
     <color name="covidbuster_fragment_background">#25252f</color>
     <color name="covidbuster_unselected">#40a4ac</color>
 
+    <color name="covidbuster_danger_zone_red">#f14e51</color>
+    <color name="covidbuster_warning_zone_yellow">#F18F4E</color>
+    <color name="covidbuster_safe_zone_green">#eaeda8</color>
+    <color name="covidbuster_safe_zone_blue">#218891</color>
+
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
