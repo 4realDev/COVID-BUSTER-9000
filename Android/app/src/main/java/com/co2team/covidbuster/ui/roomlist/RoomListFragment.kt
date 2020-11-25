@@ -1,11 +1,11 @@
 package com.co2team.covidbuster.ui.roomlist
 
-import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.co2team.covidbuster.R
 
 class RoomListFragment : Fragment() {
