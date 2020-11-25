@@ -61,7 +61,7 @@ public class BackendService {
 
             @Override public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    if (!response.isSuccessful() || responseBody != null) {
+                    if (!response.isSuccessful() || responseBody == null) {
                         Log.d(TAG, "Could not read room data! Response was: " + response);
                     } else {
                         // TODO do something with room Data

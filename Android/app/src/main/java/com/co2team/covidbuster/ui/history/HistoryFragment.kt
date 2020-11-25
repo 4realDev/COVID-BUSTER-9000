@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.co2team.covidbuster.R
+import com.co2team.covidbuster.model.RoomCo2Data
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -19,6 +20,8 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
@@ -48,6 +51,16 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(HistoryViewModel::class.java)
         // TODO: Use the ViewModel
+
+        // TODO: @Dennis: call backend service here and get data from there
+
+        // TODO: @Vladimir: please provide me with a way to set the chart data. Please consider,
+        //  that the data will come async so the chart must have some
+        //  kind of empty state until the data is here
+        // TODO: @Vladimir: you can use this test data below to implement your side
+        val chartData = ArrayList<RoomCo2Data>()
+        chartData.add(RoomCo2Data(123, LocalDateTime.parse("2020-11-26")))
+        chartData.add(RoomCo2Data(443, LocalDateTime.parse("2020-11-27")))
 
         setupLineChart()
         setupAxis()
