@@ -16,10 +16,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.provider.Settings;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
+
 import android.util.Log;
 
 import com.co2team.covidbuster.model.SensorData;
@@ -27,6 +28,7 @@ import com.co2team.covidbuster.service.BackendService;
 import com.co2team.covidbuster.ui.TabAdapter;
 import com.co2team.covidbuster.ui.currentroom.CurrentRoomFragment;
 import com.co2team.covidbuster.ui.roomlist.RoomListFragment;
+import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
 
