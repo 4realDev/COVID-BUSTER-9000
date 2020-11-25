@@ -29,6 +29,9 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private lateinit var viewModel: HistoryViewModel
     private lateinit var co2LineChart: LineChart
 
+    private lateinit var handler: Handler;
+    private lateinit var addEntryRunnable: Runnable;
+
     // Constants for limit lines
     private val limit_line_danger_threshold = 56.0f;
     private val limit_line_warning_threshold = 55.6f;
@@ -217,14 +220,14 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     }
 
     private fun startAddingValues() {
-        val handler = Handler()
-        val r: Runnable = object : Runnable {
+        handler = Handler()
+        addEntryRunnable = object : Runnable {
             override fun run() {
                 addEntry()
                 handler.postDelayed(this, 2500)
             }
         }
-        handler.postDelayed(r, 2500)
+        handler.postDelayed(addEntryRunnable, 2500)
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
@@ -232,4 +235,9 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     }
 
     override fun onNothingSelected() {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(addEntryRunnable);
+    }
 }
