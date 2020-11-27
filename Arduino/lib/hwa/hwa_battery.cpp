@@ -6,7 +6,7 @@
  * @brief Battery (basically only for battery read out)
  * 
  */
-#include "hwa/hwa_battery.h"
+#include <hwa_battery.h>
 #include <Arduino.h>
 
 /***************************************/

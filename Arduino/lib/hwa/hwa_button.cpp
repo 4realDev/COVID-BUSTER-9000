@@ -7,7 +7,7 @@
  * 
  */
 
-#include "hwa/hwa_button.h"
+#include <hwa_button.h>
 #include <Arduino.h>
 
 #include <stdint.h>

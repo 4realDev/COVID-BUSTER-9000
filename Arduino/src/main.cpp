@@ -7,18 +7,23 @@
  * 
  */
 #include <Arduino.h>
-
-#include "hwa/hwa_co2sensor.h"
-#include "com/com_ble.h"
-#include "hwa/hwa_led.h"
-#include "hwa/hwa_button.h"
-#include "hwa/hwa_battery.h"
-#include "config.h"    
+#include <app_alert.h>
+#include <app_measurement.h>
+#include <com_ble.h>
+#include "config.h"
 
 /***************************************/
 /*****       GLOBAL VARIABLES      *****/
 /***************************************/
 
+typedef enum{
+    IDLE,
+    MEASURE,
+    CONTROL,
+    ADVERTISE
+} states_t;
+
+static states_t state = IDLE;
 
 /***************************************/
 /***** PRIVATE FUNCTION PROTOTYPES *****/
@@ -38,16 +43,11 @@
  */
 void setup() {
     Serial.begin(115200);
-    hwa_co2sensor_init();
+    
+    app_alert_init();
+    app_measurement_init();
+
     com_ble_init();
-    hwa_button_init();
-    hwa_led_init();
-    hwa_battery_init();
-
-    hwa_led_setColor(0, 0xff, 0);
-    hwa_led_setBrightness(50);
-
-    // Setup the advertising packet
     com_ble_startAdv();
 }
     
@@ -60,12 +60,56 @@ void setup() {
  * @return none
  * 
  */
-void loop() {   
-    advData_t newPayload = com_ble_getPayload();
-    newPayload.co2Value = hwa_co2sensor_getCO2();
-    newPayload.temperatureValue = hwa_co2sensor_getTemperature();
-    newPayload.humidityValue = hwa_co2sensor_getHumidity();
-    newPayload.batteryLevel = hwa_button_getBatteryStatus();
-    com_ble_setPayload(newPayload);
-    delay(100);
+void loop() {  
+    static measurementValue_t localValue;
+
+    switch(state){
+        case IDLE: {
+            state = MEASURE;
+            break;
+        }
+        case MEASURE: {
+            app_measurement_check();
+            state = CONTROL;
+            break;
+        }
+        case CONTROL: {
+            localValue = app_measurement_getCurrentValue();
+            if(localValue.co2Value < MAX_NORMAL_CO2_VALUE){
+                app_alert_setAlert(NORMAL);
+            } else if(localValue.co2Value >= MAX_NORMAL_CO2_VALUE && localValue.co2Value < MAX_WARNING_CO2_VALUE){
+                app_alert_setAlert(WARNING);
+            } else if(localValue.co2Value >= MAX_WARNING_CO2_VALUE){
+                app_alert_setAlert(DANGER);
+            } else{
+                //should not be here
+            }
+
+            if(localValue.batteryValue < 20){
+                app_alert_setBattery(CRITICAL);
+            } else {
+                app_alert_setBattery(OK);
+            }
+
+            state = ADVERTISE;
+            break;
+        }
+        case ADVERTISE: {
+            advData_t newPayload = com_ble_getPayload();
+            newPayload.co2Value = localValue.co2Value;
+            newPayload.temperatureValue = localValue.temperatureValue;
+            newPayload.humidityValue = localValue.humidtyValue;
+            newPayload.batteryLevel = localValue.batteryValue;
+            com_ble_setPayload(newPayload);
+            delay(100);
+            state = IDLE;
+            break;
+        }
+        default: {
+            //should not be here!
+            break;
+        }
+
+    }
+    
 }
