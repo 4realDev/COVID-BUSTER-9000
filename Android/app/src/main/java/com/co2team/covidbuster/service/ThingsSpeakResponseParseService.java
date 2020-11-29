@@ -1,19 +1,14 @@
 package com.co2team.covidbuster.service;
 
-import android.annotation.SuppressLint;
-import android.util.Log;
-
 import com.co2team.covidbuster.model.RoomCo2Data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ThingsSpeakResponseParseService {
@@ -28,19 +23,16 @@ public class ThingsSpeakResponseParseService {
         JSONArray feeds = (JSONArray) jsonObject.get("feeds");
         for (int i = 0; i < feeds.length(); i++) {
             String createdString = (String) feeds.getJSONObject(i).get("created_at");
-            String co2ppmString = (String) feeds.getJSONObject(i).get("field" + roomId);
+            String co2ppmString = feeds.getJSONObject(i).get("field" + roomId).toString();
+            if(co2ppmString.equals("null")) {
+                // This means we have no value for this field and can ignore this entry
+                continue;
+            }
             int co2ppm = Integer.parseInt(co2ppmString);
 
-            @SuppressLint("SimpleDateFormat")
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
-
-            try {
-                Date createdDate = dateFormat.parse(createdString);
-                roomData.add(new RoomCo2Data(co2ppm, createdDate));
-            } catch (ParseException e) {
-                Log.d(TAG, "Unexpected error while parsing this string to date: " + createdString);
-                e.printStackTrace();
-            }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+            LocalDateTime createdDate = LocalDateTime.parse(createdString, formatter);
+            roomData.add(new RoomCo2Data(co2ppm, createdDate));
 
         }
 
