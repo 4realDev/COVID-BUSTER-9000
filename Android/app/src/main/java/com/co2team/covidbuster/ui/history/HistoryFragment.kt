@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IFillFormatter
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 
@@ -38,6 +39,8 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private val limit_line_safe_threshold = 55.2f;
 
     private val backendService = BackendService()
+    private val chartData = ArrayList<RoomCo2Data>()
+    private val roomLabelList = ArrayList<String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -62,6 +65,12 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
                     val set = co2LineChart.data.getDataSetByIndex(0) as LineDataSet?
                     // TODO: @Vladimir: choose roomdata.created as x value
+
+                    /*** SET X VALUE ***/
+                    val roomDataCreatedDate: String = roomData.created.toString().substringAfter("T")
+                    roomLabelList.add(roomDataCreatedDate)
+                    co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomLabelList);
+
                     val entry = Entry(set!!.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
                     co2LineChart.data.addEntry(entry, 0)
                 }
