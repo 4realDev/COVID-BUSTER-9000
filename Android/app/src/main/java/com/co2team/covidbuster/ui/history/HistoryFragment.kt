@@ -3,7 +3,6 @@ package com.co2team.covidbuster.ui.history
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,16 +32,12 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private lateinit var viewModel: HistoryViewModel
     private lateinit var co2LineChart: LineChart
 
-    private lateinit var handler: Handler;
-    private lateinit var addEntryRunnable: Runnable;
-
     // Constants for limit lines
     private val limit_line_danger_threshold = 56.0f;
     private val limit_line_warning_threshold = 55.6f;
     private val limit_line_safe_threshold = 55.2f;
 
     private val backendService = BackendService()
-    val chartData = ArrayList<RoomCo2Data>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -146,9 +141,6 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         leftAxis.setDrawAxisLine(false) // remove y axis line
 
         leftAxis.xOffset = 12f  // space between y axis and y axis value labels
-        // setup range of the y axis
-        leftAxis.axisMinimum = 54.5f
-        leftAxis.axisMaximum = 56.5f
 
         leftAxis.enableGridDashedLine(10f, 10f, 0f)
         leftAxis.setDrawLimitLinesBehindData(true)
@@ -224,15 +216,6 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         // add a new random value
         val entry = Entry(set.entryCount.toFloat(), (Math.random() * 1.125f).toFloat() + 55f)
 
-        /*
-        if(entry.getY() > limit_line_danger_threshold) {
-            set.setFillColor(ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_danger_zone_red));
-        } else if(entry.getY() > limit_line_warning_threshold){
-            set.setFillColor(ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_warning_zone_yellow));
-        } else {
-            set.setFillColor(ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_safe_zone_green));
-        }
-         */
 
         data.addEntry(
                 entry, 0
@@ -249,12 +232,6 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         co2LineChart.moveViewTo(data.entryCount - 7.toFloat(), 50f, YAxis.AxisDependency.LEFT)
     }
 
-    private fun startAddingValues() {
-        handler = Handler()
-        addEntryRunnable = object : Runnable {
-            override fun run() {
-                addEntry()
-                handler.postDelayed(this, 2500)
     private fun SetColorAccordingToCo2Measure(co2Measure: Float, set: LineDataSet) {
         val drawable = when {
             co2Measure > limit_line_danger_threshold -> {
@@ -267,7 +244,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                 ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_safe)!!
             }
         }
-        handler.postDelayed(addEntryRunnable, 2500)
+        set.fillDrawable = drawable
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
@@ -275,9 +252,4 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     }
 
     override fun onNothingSelected() {}
-
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacks(addEntryRunnable);
-    }
 }
