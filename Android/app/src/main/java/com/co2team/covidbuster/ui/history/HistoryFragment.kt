@@ -1,6 +1,7 @@
 package com.co2team.covidbuster.ui.history
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -254,6 +255,16 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
             override fun run() {
                 addEntry()
                 handler.postDelayed(this, 2500)
+    private fun SetColorAccordingToCo2Measure(co2Measure: Float, set: LineDataSet) {
+        val drawable = when {
+            co2Measure > limit_line_danger_threshold -> {
+                ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_danger)!!
+            }
+            co2Measure > limit_line_warning_threshold -> {
+                ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_warning)!!
+            }
+            else -> {
+                ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_safe)!!
             }
         }
         handler.postDelayed(addEntryRunnable, 2500)
