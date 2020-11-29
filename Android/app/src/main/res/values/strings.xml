@@ -13,4 +13,8 @@
 
     <string name="current_room_fragment_history_button">History</string>
     <string name="current_room_fragment_co2_level_label">Current co2 level: %1$s</string>
+    <string name="current_room_fragment_safe">safe</string>
+    <string name="current_room_fragment_dangerous">dangerous</string>
+    <string name="current_room_fragment_warning">warning</string>
+    <string name="status_image">status image</string>
 </resources>

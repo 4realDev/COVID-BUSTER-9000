@@ -22,6 +22,8 @@ class CurrentRoomFragment : Fragment() {
 
     private lateinit var historyButton: Button
     private lateinit var co2Label: TextView
+    private lateinit var statusLabel: TextView
+    private lateinit var explanationLabel: TextView
     private lateinit var statusImg: ImageView
 
     private val viewModel: CurrentRoomViewModel by activityViewModels()
@@ -31,6 +33,8 @@ class CurrentRoomFragment : Fragment() {
         val view = inflater.inflate(R.layout.current_room_fragment, container, false)
         historyButton = view.findViewById(R.id.history_fragment_button)
         co2Label = view.findViewById(R.id.labelCurrentCo2)
+        statusLabel = view.findViewById(R.id.labelStatus)
+        explanationLabel = view.findViewById(R.id.labelExplanation)
         statusImg = view.findViewById(R.id.imgSafetyStatus)
         return view
     }
@@ -43,12 +47,18 @@ class CurrentRoomFragment : Fragment() {
             when {
                 roomData.co2ppm < 350 -> {
                     statusImg.setImageResource(R.drawable.safe)
+                    statusLabel.text = getString(R.string.current_room_fragment_safe)
+                    explanationLabel.text = "ℹ️ This room is safe to stay in :)"
                 }
                 roomData.co2ppm > 500 -> {
                     statusImg.setImageResource(R.drawable.danger)
+                    statusLabel.text = getString(R.string.current_room_fragment_dangerous)
+                    explanationLabel.text = "ℹ️ Please ventilate this room immediately! The measured co2 levels indicate, that there was no exchange of fresh air inside this room."
                 }
                 else -> {
                     statusImg.setImageResource(R.drawable.warning)
+                    statusLabel.text = getString(R.string.current_room_fragment_warning)
+                    explanationLabel.text = "ℹ️ The air is getting thick in here. Consider ventilating this room to keep the infection rate low."
                 }
             }
         })
