@@ -34,9 +34,9 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private lateinit var co2LineChart: LineChart
 
     // Constants for limit lines
-    private val limit_line_danger_threshold = 56.0f;
-    private val limit_line_warning_threshold = 55.6f;
-    private val limit_line_safe_threshold = 55.2f;
+    private val limit_line_danger_threshold = 395.0f;
+    private val limit_line_warning_threshold = 375.0f;
+    private val limit_line_safe_threshold = 325.0f;
 
     private val backendService = BackendService()
     private val chartData = ArrayList<RoomCo2Data>()
@@ -60,7 +60,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                 chartData.addAll(roomCo2Data)
 
                 for(roomData in roomCo2Data) {
-                    println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + "on date: " + roomData.created)
+                    println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + " on date: " + roomData.created)
                     val yAxisRepresentingCo2Ppm = roomData.co2ppm.toFloat()
 
                     val set = co2LineChart.data.getDataSetByIndex(0) as LineDataSet?
@@ -71,14 +71,17 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                     roomLabelList.add(roomDataCreatedDate)
                     co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomLabelList);
 
+                    /*** ADD NEW ENTRY ***/
                     val entry = Entry(set!!.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
                     co2LineChart.data.addEntry(entry, 0)
+
+                    SetColorAccordingToCo2Measure(entry.y, set)
+
+                    // TODO: @Vladimir: do whatever is needed here to update the chart correctly
+                    co2LineChart.data.notifyDataChanged()
+                    co2LineChart.notifyDataSetChanged()
+                    co2LineChart.moveViewToX(co2LineChart.data.entryCount - 7.toFloat())
                 }
-                // TODO: @Vladimir: do whatever is needed here to update the chart correctly
-                co2LineChart.data.notifyDataChanged()
-                co2LineChart.notifyDataSetChanged()
-                co2LineChart.setVisibleYRangeMaximum(15F, YAxis.AxisDependency.LEFT);
-                co2LineChart.moveViewTo(co2LineChart.data.entryCount - 7.toFloat(), 50f, YAxis.AxisDependency.LEFT)
             }
         })
 
@@ -137,7 +140,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         // fill line underneath
         lineDataSet.setDrawFilled(true)
         lineDataSet.fillFormatter = IFillFormatter { _, _ -> co2LineChart.axisLeft.axisMinimum }
-        val drawable = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent)
+        val drawable = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_safe)
         lineDataSet.fillDrawable = drawable
     }
 
@@ -203,6 +206,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         l.setCustom(arrayOf(data_line, danger_zone_legend, warning_zone_legend, safe_zone_legend))
     }
 
+    // TODO: YET NOT USED - REMOVE BEFORE FINAL SUBMISSION
     // Add entries to line chart
     private fun addEntry() {
         var data = co2LineChart.data
@@ -225,6 +229,8 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         // add a new random value
         val entry = Entry(set.entryCount.toFloat(), (Math.random() * 1.125f).toFloat() + 55f)
 
+
+        SetColorAccordingToCo2Measure(entry.y, set)
 
         data.addEntry(
                 entry, 0
