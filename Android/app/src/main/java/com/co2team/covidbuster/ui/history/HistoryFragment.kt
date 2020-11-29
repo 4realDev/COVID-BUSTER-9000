@@ -3,15 +3,17 @@ package com.co2team.covidbuster.ui.history
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
+import com.co2team.covidbuster.service.BackendService
+import com.co2team.covidbuster.service.OnDataReceivedCallback
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -20,8 +22,6 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
@@ -40,6 +40,9 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private val limit_line_warning_threshold = 55.6f;
     private val limit_line_safe_threshold = 55.2f;
 
+    private val backendService = BackendService()
+    val chartData = ArrayList<RoomCo2Data>()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.history_fragment, container, false)
@@ -52,25 +55,38 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(HistoryViewModel::class.java)
         // TODO: Use the ViewModel
 
-        // TODO: @Dennis: call backend service here and get data from there
+        // TODO: insert the correct room ID
+        backendService.readCo2MeasurementsForRoom(1, object : OnDataReceivedCallback {
+            override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
+                chartData.addAll(roomCo2Data)
 
-        // TODO: @Vladimir: please provide me with a way to set the chart data. Please consider,
-        //  that the data will come async so the chart must have some
-        //  kind of empty state until the data is here
-        // TODO: @Vladimir: you can use this test data below to implement your side
-        val chartData = ArrayList<RoomCo2Data>()
-        chartData.add(RoomCo2Data(123, LocalDateTime.parse("2020-11-26")))
-        chartData.add(RoomCo2Data(443, LocalDateTime.parse("2020-11-27")))
+                for(roomData in roomCo2Data) {
+                    println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + "on date: " + roomData.created)
+                    val yAxisRepresentingCo2Ppm = roomData.co2ppm.toFloat()
+
+                    val set = co2LineChart.data.getDataSetByIndex(0) as LineDataSet?
+                    // TODO: @Vladimir: choose roomdata.created as x value
+                    val entry = Entry(set!!.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
+                    co2LineChart.data.addEntry(entry, 0)
+                }
+                // TODO: @Vladimir: do whatever is needed here to update the chart correctly
+                co2LineChart.data.notifyDataChanged()
+                co2LineChart.notifyDataSetChanged()
+                co2LineChart.setVisibleYRangeMaximum(15F, YAxis.AxisDependency.LEFT);
+                co2LineChart.moveViewTo(co2LineChart.data.entryCount - 7.toFloat(), 50f, YAxis.AxisDependency.LEFT)
+            }
+        })
 
         setupLineChart()
         setupAxis()
         setupLimitLines()
         setupLegend()
 
-        val data = LineData()
-        co2LineChart.data = data
+        co2LineChart.data = LineData()
         co2LineChart.setOnChartValueSelectedListener(this)
-        startAddingValues()
+        val set = LineDataSet(null, "CO2 Data Set")
+        setupLineDataSet(set)
+        co2LineChart.data.addDataSet(set)
     }
 
     private fun setupLineChart() {

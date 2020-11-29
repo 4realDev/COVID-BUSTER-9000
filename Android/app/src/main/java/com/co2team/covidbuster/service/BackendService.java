@@ -3,17 +3,12 @@ package com.co2team.covidbuster.service;
 import android.util.Log;
 
 import com.co2team.covidbuster.model.RoomCo2Data;
-import com.squareup.moshi.Moshi;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -49,7 +44,7 @@ public class BackendService {
         });
     }
 
-    public void readCo2MeasurementsForRoom(int roomId) {
+    public void readCo2MeasurementsForRoom(int roomId, OnDataReceivedCallback done) {
         Request request = new Request.Builder()
                 .url(READ_URL + roomId + ".json?average=15&round=0")
                 .build();
@@ -64,8 +59,8 @@ public class BackendService {
                     if (!response.isSuccessful() || responseBody == null) {
                         Log.d(TAG, "Could not read room data! Response was: " + response);
                     } else {
-                        // TODO do something with room Data
                         List<RoomCo2Data> roomCo2Data = jsonParser.parseJsonResponse(responseBody.string(), roomId);
+                        done.onSuccess(roomCo2Data);
                     }
                 } catch (JSONException e) {
                     Log.d(TAG, "Error parsing JSON response!");

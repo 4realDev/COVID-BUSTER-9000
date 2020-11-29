@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) { }
         });
 
-        // TODO remove this test call
-        backendService.readCo2MeasurementsForRoom(1);
-
         Log.d(TAG, "onCreate");
         boolean hasBle = getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
         if (hasBle) {
