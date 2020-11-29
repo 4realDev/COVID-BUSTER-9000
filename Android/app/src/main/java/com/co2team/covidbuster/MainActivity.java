@@ -19,19 +19,24 @@ import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
 
+import com.co2team.covidbuster.model.RoomCo2Data;
 import com.co2team.covidbuster.model.SensorData;
 import com.co2team.covidbuster.service.BackendService;
 import com.co2team.covidbuster.ui.TabAdapter;
 import com.co2team.covidbuster.ui.currentroom.CurrentRoomFragment;
+import com.co2team.covidbuster.ui.currentroom.CurrentRoomViewModel;
 import com.co2team.covidbuster.ui.roomlist.RoomListFragment;
+import com.co2team.covidbuster.ui.roomlist.RoomListViewModel;
 import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final BackendService backendService = new BackendService();
 
+    private CurrentRoomViewModel roomViewModel;
+
     private final ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -56,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
 
                 backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
+
+                roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
             }
         }
 
@@ -80,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+
+        roomViewModel = new ViewModelProvider(this).get(CurrentRoomViewModel.class);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
