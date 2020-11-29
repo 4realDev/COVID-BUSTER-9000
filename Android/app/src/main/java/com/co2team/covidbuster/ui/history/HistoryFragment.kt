@@ -135,7 +135,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private fun setupLineChart() {
         co2LineChart.description.isEnabled = false
         co2LineChart.setNoDataText(getString(R.string.history_fragment_no_data_text))
-        co2LineChart.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorPrimary))
+        co2LineChart.setBackgroundColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimary))
 
         co2LineChart.setTouchEnabled(true)  // enable touch gestures
 
@@ -156,7 +156,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     private fun setupLineDataSet(lineDataSet: LineDataSet) {
         lineDataSet.lineWidth = 2.5f
-        lineDataSet.color = ContextCompat.getColor(activity!!.applicationContext, R.color.colorAccent)
+        lineDataSet.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent)
 
         lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
         lineDataSet.cubicIntensity = 0.2f
@@ -164,18 +164,18 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
         lineDataSet.setDrawCircles(true)
         lineDataSet.circleRadius = 4.5f
-        lineDataSet.setCircleColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorAccent))
+        lineDataSet.setCircleColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent))
         lineDataSet.setDrawCircleHole(false)
 
         lineDataSet.highlightLineWidth = 1f
-        lineDataSet.highLightColor = ContextCompat.getColor(activity!!.applicationContext, R.color.colorAccent)
+        lineDataSet.highLightColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent)
 
         lineDataSet.valueTextSize = 6f  // make value text invisible
 
         // fill line underneath
         lineDataSet.setDrawFilled(true)
         lineDataSet.fillFormatter = IFillFormatter { _, _ -> co2LineChart.axisLeft.axisMinimum }
-        val drawable = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_safe)
+        val drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_safe)
         lineDataSet.fillDrawable = drawable
     }
 
@@ -210,15 +210,15 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         co2LineChart.axisLeft.removeAllLimitLines()
         val dangerLimit = LimitLine(limitLineDangerThreshold)
         dangerLimit.lineWidth = 1f
-        dangerLimit.lineColor = ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_danger_zone_red)
+        dangerLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_danger_zone_red)
 
         val warningLimit = LimitLine(limitLineWarningThreshold)
         warningLimit.lineWidth = 1f
-        warningLimit.lineColor = ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_warning_zone_yellow)
+        warningLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_warning_zone_yellow)
 
         val safeLimit = LimitLine(limitLineSafeThreshold)
         safeLimit.lineWidth = 1f
-        safeLimit.lineColor = ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_safe_zone_green)
+        safeLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_safe_zone_green)
 
         co2LineChart.axisLeft.addLimitLine(dangerLimit)
         co2LineChart.axisLeft.addLimitLine(warningLimit)
@@ -235,9 +235,9 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         l.yOffset = 12f     // spacing under legend
 
         // setup custom legend entries
-        val dangerZoneLegend = LegendEntry(getString(R.string.history_fragment_danger_label), Legend.LegendForm.CIRCLE, 10f, 2f, null, ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_danger_zone_red))
-        val warningZoneLegendEntry = LegendEntry(getString(R.string.history_fragment_warning_label), Legend.LegendForm.CIRCLE, 10f, 2f, null, ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_warning_zone_yellow))
-        val safeZoneLegendEntry = LegendEntry(getString(R.string.history_fragment_safe_label), Legend.LegendForm.CIRCLE, 10f, 2f, null, ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_safe_zone_green))
+        val dangerZoneLegend = LegendEntry(getString(R.string.history_fragment_danger_label), Legend.LegendForm.CIRCLE, 10f, 2f, null, ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_danger_zone_red))
+        val warningZoneLegendEntry = LegendEntry(getString(R.string.history_fragment_warning_label), Legend.LegendForm.CIRCLE, 10f, 2f, null, ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_warning_zone_yellow))
+        val safeZoneLegendEntry = LegendEntry(getString(R.string.history_fragment_safe_label), Legend.LegendForm.CIRCLE, 10f, 2f, null, ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_safe_zone_green))
         l.setCustom(arrayOf(dangerZoneLegend, warningZoneLegendEntry, safeZoneLegendEntry))
     }
 
@@ -248,18 +248,18 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         val safetyStatus: String
         when {
             co2Measure > limitLineDangerThreshold -> {
-                drawable = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_danger)!!
-                colorId = ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_danger_zone_red)
+                drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_danger)!!
+                colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_danger_zone_red)
                 safetyStatus = getString(R.string.history_fragment_danger_label)
             }
             co2Measure > limitLineWarningThreshold -> {
-                drawable = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_warning)!!
-                colorId = ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_warning_zone_yellow)
+                drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_warning)!!
+                colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_warning_zone_yellow)
                 safetyStatus = getString(R.string.history_fragment_warning_label)
             }
             else -> {
-                drawable = ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_safe)!!
-                colorId = ContextCompat.getColor(activity!!.applicationContext, R.color.covidbuster_safe_zone_green)
+                drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_safe)!!
+                colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_safe_zone_green)
                 safetyStatus = getString(R.string.history_fragment_safe_label)
             }
         }
@@ -271,7 +271,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        Toast.makeText(activity!!.applicationContext, e.toString(), Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireActivity().applicationContext, e.toString(), Toast.LENGTH_SHORT).show()
     }
 
     override fun onNothingSelected() {}
