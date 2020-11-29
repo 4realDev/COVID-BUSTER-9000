@@ -7,8 +7,7 @@
 
     <string name="history_fragment_no_data_text">Loading room data…</string>
 
-    <string name="history_fragment_co2_data_label">CO2 Data</string>
     <string name="history_fragment_safe_label">Safe</string>
-    <string name="history_fragment_warning__label">Warning</string>
+    <string name="history_fragment_warning_label">Warning</string>
     <string name="history_fragment_danger_label">Danger</string>
 </resources>
