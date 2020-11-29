@@ -75,12 +75,12 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                     roomLabelList.add(roomDataCreatedDate)
                     co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomLabelList);
 
-                    val entry = Entry(set!!.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
+                    val entry = Entry(set.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
                     co2LineChart.data.addEntry(entry, 0)
                 }
 
-                lastTimeUpdatedDate.text = "Time: " + roomCo2Data.last().created.toString().substringBefore("T")
-                lastTimeUpdatedTime.text = "Date: " + roomCo2Data.last().created.toString().substringAfter("T")
+                lastTimeUpdatedDate.text = getString(R.string.dateLabel, roomCo2Data.last().created.toString().substringBefore("T"))
+                lastTimeUpdatedTime.text = getString(R.string.timeLabel, roomCo2Data.last().created.toString().substringAfter("T"))
                 setColorAccordingToCo2Measure(roomCo2Data.last().co2ppm.toFloat(), co2LineChart.data.getDataSetByIndex(0) as LineDataSet?)
 
                 co2LineChart.data.notifyDataChanged()

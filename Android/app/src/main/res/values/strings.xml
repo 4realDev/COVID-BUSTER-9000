@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Covid Buster</string>
+    <string name="dateLabel">Date: %1$s</string>
+    <string name="timeLabel">Time: %1$s</string>
 </resources>
