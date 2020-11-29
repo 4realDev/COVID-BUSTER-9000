@@ -144,6 +144,8 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         co2LineChart.setScaleEnabled(false)
         co2LineChart.isDragEnabled = true
 
+        co2LineChart.setOnChartValueSelectedListener(this);
+
         // enable value highlighting
         co2LineChart.isHighlightPerTapEnabled = true
         co2LineChart.isHighlightPerDragEnabled = true
@@ -170,7 +172,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         lineDataSet.highlightLineWidth = 1f
         lineDataSet.highLightColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent)
 
-        lineDataSet.valueTextSize = 6f  // make value text invisible
+        lineDataSet.setDrawValues(false)
 
         // fill line underneath
         lineDataSet.setDrawFilled(true)
