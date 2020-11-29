@@ -10,4 +10,7 @@
     <string name="history_fragment_safe_label">Safe</string>
     <string name="history_fragment_warning_label">Warning</string>
     <string name="history_fragment_danger_label">Danger</string>
+
+    <string name="current_room_fragment_history_button">History</string>
+    <string name="current_room_fragment_co2_level_label">Current co2 level: %1$s</string>
 </resources>
