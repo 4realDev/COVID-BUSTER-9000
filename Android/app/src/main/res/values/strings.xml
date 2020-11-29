@@ -17,4 +17,5 @@
     <string name="current_room_fragment_dangerous">dangerous</string>
     <string name="current_room_fragment_warning">warning</string>
     <string name="status_image">status image</string>
+    <string name="room_icon">Room Icon</string>
 </resources>
