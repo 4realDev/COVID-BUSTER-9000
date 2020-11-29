@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="6dp"
-            android:text="16:30"
+            android:text="00:00"
             android:textAlignment="center"
             android:textColor="@color/covidbuster_unselected"
             android:textSize="12dp" />
@@ -38,7 +38,7 @@
             android:id="@+id/lastTimeUpdatedDateTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="2020-11-23"
+            android:text="0000-00-00"
             android:textAlignment="center"
             android:textColor="@color/covidbuster_unselected"
             android:textSize="12dp" />

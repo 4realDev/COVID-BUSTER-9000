@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -32,6 +33,8 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     private lateinit var viewModel: HistoryViewModel
     private lateinit var co2LineChart: LineChart
+    private lateinit var lastTimeUpdatedTime: TextView
+    private lateinit var lastTimeUpdatedDate: TextView
 
     // Constants for limit lines
     private val limit_line_danger_threshold = 395.0f;
@@ -46,6 +49,8 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.history_fragment, container, false)
         co2LineChart = view.findViewById(R.id.co2LineChart);
+        lastTimeUpdatedTime = view.findViewById(R.id.lastTimeUpdatedTimeTv);
+        lastTimeUpdatedDate = view.findViewById(R.id.lastTimeUpdatedDateTv);
         return view;
     }
 
@@ -59,29 +64,28 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
             override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
                 chartData.addAll(roomCo2Data)
 
+                val data = createOrLoadLineData()
+                val set = createOrLoadLineDataSet(data)
+
                 for(roomData in roomCo2Data) {
                     println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + " on date: " + roomData.created)
                     val yAxisRepresentingCo2Ppm = roomData.co2ppm.toFloat()
 
-                    val set = co2LineChart.data.getDataSetByIndex(0) as LineDataSet?
-                    // TODO: @Vladimir: choose roomdata.created as x value
-
-                    /*** SET X VALUE ***/
                     val roomDataCreatedDate: String = roomData.created.toString().substringAfter("T")
                     roomLabelList.add(roomDataCreatedDate)
                     co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomLabelList);
 
-                    /*** ADD NEW ENTRY ***/
                     val entry = Entry(set!!.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
                     co2LineChart.data.addEntry(entry, 0)
-
-                    SetColorAccordingToCo2Measure(entry.y, set)
-
-                    // TODO: @Vladimir: do whatever is needed here to update the chart correctly
-                    co2LineChart.data.notifyDataChanged()
-                    co2LineChart.notifyDataSetChanged()
-                    co2LineChart.moveViewToX(co2LineChart.data.entryCount - 7.toFloat())
                 }
+
+                lastTimeUpdatedDate.text = "Time: " + roomCo2Data.last().created.toString().substringBefore("T")
+                lastTimeUpdatedTime.text = "Date: " + roomCo2Data.last().created.toString().substringAfter("T")
+                setColorAccordingToCo2Measure(roomCo2Data.last().co2ppm.toFloat(), co2LineChart.data.getDataSetByIndex(0) as LineDataSet?)
+
+                co2LineChart.data.notifyDataChanged()
+                co2LineChart.notifyDataSetChanged()
+                co2LineChart.moveViewToX(co2LineChart.data.entryCount - 7.toFloat())
             }
         })
 
@@ -90,16 +94,40 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         setupLimitLines()
         setupLegend()
 
-        co2LineChart.data = LineData()
+        /*co2LineChart.data = LineData()
         co2LineChart.setOnChartValueSelectedListener(this)
         val set = LineDataSet(null, "CO2 Data Set")
         setupLineDataSet(set)
-        co2LineChart.data.addDataSet(set)
+        co2LineChart.data.addDataSet(set)*/
+    }
+
+    private fun createOrLoadLineData(): LineData {
+        var data = co2LineChart.data
+
+        // if LineData object has no data, create a new empty one and set it to the line graph
+        if (data == null) {
+            data = LineData()
+            co2LineChart.data = data
+        }
+        return data
+    }
+
+    private fun createOrLoadLineDataSet(data: LineData): LineDataSet {
+        var set = data.getDataSetByIndex(0) as LineDataSet? // take the data set from the LineData object
+
+        // if LineData has no DataSet yet, create a new empty one and add it to the LineData object
+        if (set == null) {
+            set = LineDataSet(null, "CO2 Data Set")
+            setupLineDataSet(set)
+            data.addDataSet(set)
+        }
+        return set
     }
 
     private fun setupLineChart() {
         co2LineChart.description.isEnabled = false
-        co2LineChart.setNoDataText("Wupsi, no data")
+        // TODO: Paste room number in NoDataText String
+        co2LineChart.setNoDataText("Loading room data...")
         co2LineChart.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorPrimary))
 
         co2LineChart.setTouchEnabled(true)  // enable touch gestures
@@ -229,9 +257,6 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         // add a new random value
         val entry = Entry(set.entryCount.toFloat(), (Math.random() * 1.125f).toFloat() + 55f)
 
-
-        SetColorAccordingToCo2Measure(entry.y, set)
-
         data.addEntry(
                 entry, 0
         )
@@ -247,7 +272,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         co2LineChart.moveViewTo(data.entryCount - 7.toFloat(), 50f, YAxis.AxisDependency.LEFT)
     }
 
-    private fun SetColorAccordingToCo2Measure(co2Measure: Float, set: LineDataSet) {
+    private fun setColorAccordingToCo2Measure(co2Measure: Float, set: LineDataSet?) {
         val drawable = when {
             co2Measure > limit_line_danger_threshold -> {
                 ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_danger)!!
@@ -259,7 +284,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                 ContextCompat.getDrawable(activity!!.applicationContext, R.drawable.fade_accent_safe)!!
             }
         }
-        set.fillDrawable = drawable
+        set?.fillDrawable = drawable
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
