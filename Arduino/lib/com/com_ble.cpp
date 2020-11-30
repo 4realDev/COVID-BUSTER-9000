@@ -6,10 +6,10 @@
  * @brief Bluetooth Low Energy (BLE)
  * 
  */
-#include "com/com_ble.h"
+#include <com_ble.h>
 #include <bluefruit.h>
 #include <SPI.h>
-#include "config.h"
+#include "../../src/config.h"
 
 /***************************************/
 /*****       GLOBAL VARIABLES      *****/

@@ -7,7 +7,7 @@
  * 
  */
 
-#include "hwa/hwa_led.h"
+#include <hwa_led.h>
 #include <Arduino.h>
 
 #include <stdint.h>
@@ -43,9 +43,9 @@ void hwa_led_init(void){
  * 
  * Set LED to color
  * 
- * @param red: Red LED
- * @param green: Green LED
- * @param blue: Blue LED
+ * @param red: Red LED [0...255]
+ * @param green: Green LED [0...255]
+ * @param blue: Blue LED [0...255]
  * @return none
  * 
  */
@@ -53,6 +53,7 @@ void hwa_led_setColor(uint8_t red, uint8_t green, uint8_t blue){
     color = pixel.Color(red, green, blue);
     pixel.setPixelColor(0, color);
     pixel.show();
+
 }
 
 

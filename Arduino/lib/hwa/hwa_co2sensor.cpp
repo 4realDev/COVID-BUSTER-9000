@@ -7,28 +7,34 @@
  * 
  */
 
-#include "hwa/hwa_co2sensor.h"
+#include <hwa_co2sensor.h>
 #include <Wire.h>
 #include "SparkFun_SCD30_Arduino_Library.h"
 #include <Arduino.h>
 #include <stdbool.h>
+#include <stdint.h>
+
+#include <hwa_button.h>
+#include "../../src/config.h"
 
 
 /***************************************/
 /*****       GLOBAL VARIABLES      *****/
 /***************************************/
 
-#define MINCO2RANDOM 300
-#define MAXCO2RANDOM 600
-
-#define MINTEMPRANDOM 20
-#define MAXTEMPRANDOM 26
-
-#define MINHUMIDRANDOM 30
-#define MAXHUMIDRANDOM 40
-
 static SCD30 co2Sensor;
 static bool sensorAttached;
+
+static uint16_t randomCo2Value = 800;
+static uint8_t randomTemperatureValue = 23;
+static uint8_t randomHumidityValue = 35;
+
+
+/***************************************/
+/***** PRIVATE FUNCTION PROTOTYPES *****/
+/***************************************/
+
+static void setToDangerousCallback(void);
 
 /***************************************/
 /*****       PUBLIC FUNCTIONS      *****/
@@ -45,9 +51,13 @@ void hwa_co2sensor_init(void){
     Wire.begin();
     if (co2Sensor.begin() == false) {
         sensorAttached = false;
+        hwa_button_init();
+        hwa_button_setCallbackFunction(&setToDangerousCallback);
     } else {
         sensorAttached = true;
     }
+
+
 }
 
 /**
@@ -58,11 +68,12 @@ void hwa_co2sensor_init(void){
  * @return float: current CO2 value
  * 
  */
-float hwa_co2sensor_getCO2(void){
+uint16_t hwa_co2sensor_getCO2(void){
     if(sensorAttached){
         return co2Sensor.getCO2();
     } else {
-        return (float)random(MINCO2RANDOM, MAXCO2RANDOM);
+        randomCo2Value += (uint16_t)random(-1, 2);
+        return randomCo2Value;
     }
 }
 
@@ -74,11 +85,12 @@ float hwa_co2sensor_getCO2(void){
  * @return float: current temperature value
  * 
  */
-float hwa_co2sensor_getTemperature(void){
+uint8_t hwa_co2sensor_getTemperature(void){
     if(sensorAttached){
         return co2Sensor.getTemperature();
     } else {
-        return (float)random(MINTEMPRANDOM, MAXTEMPRANDOM);
+        randomTemperatureValue += (uint8_t)random(0, 0);
+        return randomTemperatureValue;
     }
     
 }
@@ -91,11 +103,12 @@ float hwa_co2sensor_getTemperature(void){
  * @return float: current CO2 value
  * 
  */
-float hwa_co2sensor_getHumidity(void){
+uint8_t hwa_co2sensor_getHumidity(void){
     if(sensorAttached){
         return co2Sensor.getHumidity();
     } else {
-        return (float)random(MINHUMIDRANDOM, MAXHUMIDRANDOM);
+        randomHumidityValue += (uint8_t)random(0, 0);
+        return randomHumidityValue;
     }
 }
 
@@ -114,3 +127,24 @@ bool hwa_co2sensor_dataAvailable(void){
         return true;
     }
 }
+
+/**
+ * 
+ * Returns if sensor is attached
+ * 
+ * @param none
+ * @return bool: sensor is attached
+ * 
+ */
+bool hwa_co2sensor_isAttached(void){
+    return sensorAttached;
+}
+
+/***************************************/
+/*****       PRIVATE FUNCTIONS     *****/
+/***************************************/
+
+void setToDangerousCallback(void){
+    randomCo2Value = MIN_DANGER_CO2_VALUE+20;
+}
+
