@@ -20,6 +20,7 @@ import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.service.BackendService
 import com.co2team.covidbuster.service.OnDataReceivedCallback
 import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_ID
+import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_NAME
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -60,14 +61,14 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private val backendService = BackendService()
     private val chartData = ArrayList<RoomCo2Data>()
     private val roomLabelList = ArrayList<String>()
-    private var roomId: Int = -1
+    private var roomIdExtra: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.history_fragment, container, false)
 
         val args = arguments
-        roomId = args!!.getInt(EXTRA_ROOM_ID)
+        roomIdExtra = args!!.getInt(EXTRA_ROOM_ID)
 
         co2LineChart = view.findViewById(R.id.co2LineChart)
         lastTimeUpdatedTime = view.findViewById(R.id.lastTimeUpdatedTimeTv)
@@ -84,7 +85,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         // TODO: Use the ViewModel
 
         // TODO: insert the correct room ID
-        backendService.readCo2MeasurementsForRoom(roomId, object : OnDataReceivedCallback {
+        backendService.readCo2MeasurementsForRoom(roomIdExtra, object : OnDataReceivedCallback {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(roomDataList: List<RoomCo2Data>) {
                 chartData.addAll(roomDataList)
@@ -154,7 +155,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         co2LineChart.setScaleEnabled(false)
         co2LineChart.isDragEnabled = true
 
-        co2LineChart.setOnChartValueSelectedListener(this);
+        co2LineChart.setOnChartValueSelectedListener(this)
 
         // enable value highlighting
         co2LineChart.isHighlightPerTapEnabled = true
@@ -280,10 +281,10 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
             val localTimeSubstring = roomCo2Data.created.toString().substringBefore(localDateTimeDelimiter)
             val localDateSubstring = roomCo2Data.created.toString().substringAfter(localDateTimeDelimiter)
-            lastTimeUpdatedDate.text = getString(R.string.history_fragment_last_time_updated_time) + " " + localTimeSubstring
-            lastTimeUpdatedTime.text = getString(R.string.history_fragment_last_time_updated_date) + " " + localDateSubstring
-            lastTimeUpdatedCO2Value.text = getString(R.string.history_fragment_last_time_updated_co2_value) + " " + roomCo2Data.co2ppm.toString() + " ppm"
-            lastTimeUpdatedSafetyStatus.text = getString(R.string.history_fragment_last_time_updated_safety_status) + " " + safetyStatus
+            lastTimeUpdatedDate.text = localTimeSubstring
+            lastTimeUpdatedTime.text = localDateSubstring
+            lastTimeUpdatedCO2Value.text = roomCo2Data.co2ppm.toString() + " ppm"
+            lastTimeUpdatedSafetyStatus.text = safetyStatus
             lastTimeUpdatedSafetyStatus.setTextColor(colorId)
         }
     }
