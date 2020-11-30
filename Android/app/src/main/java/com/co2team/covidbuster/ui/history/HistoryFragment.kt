@@ -84,7 +84,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         // TODO: Use the ViewModel
 
         // TODO: insert the correct room ID
-        backendService.readCo2MeasurementsForRoom(1, object : OnDataReceivedCallback {
+        backendService.readCo2MeasurementsForRoom(roomId, object : OnDataReceivedCallback {
             @SuppressLint("SetTextI18n")
             override fun onSuccess(roomDataList: List<RoomCo2Data>) {
                 chartData.addAll(roomDataList)

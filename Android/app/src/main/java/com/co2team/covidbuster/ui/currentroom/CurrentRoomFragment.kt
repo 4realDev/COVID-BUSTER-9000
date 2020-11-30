@@ -15,6 +15,8 @@ import com.co2team.covidbuster.Constants.WARNING_CO2_THRESHOLD
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.ui.history.HistoryActivity
+import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_ID
+import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_NAME
 
 
 class CurrentRoomFragment : Fragment() {
@@ -55,11 +57,13 @@ class CurrentRoomFragment : Fragment() {
             } else {
                 setInitialState()
             }
-
         })
 
         historyButton.setOnClickListener {
-            val intent = Intent(context, HistoryActivity::class.java)
+            val intent = Intent(requireActivity().applicationContext, HistoryActivity::class.java)
+            // TODO: GET ROOM ID AND ROOM NAME FROM nRF
+            //intent.putExtra(EXTRA_ROOM_ID, roomData[position]!!.id)
+            //intent.putExtra(EXTRA_ROOM_NAME, roomData[position]!!.name)
             startActivity(intent)
         }
     }

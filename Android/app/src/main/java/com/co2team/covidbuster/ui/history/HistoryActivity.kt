@@ -14,8 +14,8 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(R.layout.history_activity)
 
         val intent = intent
-        val roomId = intent.getIntExtra(EXTRA_ROOM_ID, -1) //if it's a string you stored.
-        val roomName = intent.getStringExtra(EXTRA_ROOM_NAME) //if it's a string you stored.
+        val roomId = intent.getIntExtra(EXTRA_ROOM_ID, -1)
+        val roomName = intent.getStringExtra(EXTRA_ROOM_NAME)
 
         title = roomName
 
