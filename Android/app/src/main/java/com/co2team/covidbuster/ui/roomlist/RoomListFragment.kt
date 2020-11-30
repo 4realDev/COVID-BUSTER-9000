@@ -36,7 +36,7 @@ class RoomListFragment : ListFragment() {
         super.onListItemClick(l, v, position, id)
         val intent = Intent(requireActivity().applicationContext, HistoryActivity::class.java)
         intent.putExtra(EXTRA_ROOM_ID, Constants.allRooms[position].id)
-        intent.putExtra(EXTRA_ROOM_NAME, roomData[position]!!.name)
+        intent.putExtra(EXTRA_ROOM_NAME, Constants.allRooms[position].name)
         startActivity(intent)
     }
 

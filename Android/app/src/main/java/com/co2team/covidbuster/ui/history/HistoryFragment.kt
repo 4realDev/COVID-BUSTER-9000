@@ -81,18 +81,15 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(HistoryViewModel::class.java)
-        // TODO: Use the ViewModel
 
-        // TODO: insert the correct room ID
         backendService.readCo2MeasurementsForRoom(roomId, object : OnDataReceivedCallback {
-            @SuppressLint("SetTextI18n")
-            override fun onSuccess(roomDataList: List<RoomCo2Data>) {
-                chartData.addAll(roomDataList)
+            override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
+                chartData.addAll(roomCo2Data)
 
                 val data = createOrLoadLineData()
                 val set = createOrLoadLineDataSet(data)
 
-                for (roomData in roomDataList) {
+                for (roomData in roomCo2Data) {
                     println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + " on date: " + roomData.created)
                     val yAxisRepresentingCo2Ppm = roomData.co2ppm.toFloat()
 
@@ -105,7 +102,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                 }
 
                 // Update Line Graph
-                updateUIElementsAccordingToRoomData(roomDataList.last(), set)
+                updateUIElementsAccordingToRoomData(roomCo2Data.last(), set)
 
                 co2LineChart.data.notifyDataChanged()
                 co2LineChart.notifyDataSetChanged()
@@ -154,7 +151,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         co2LineChart.setScaleEnabled(false)
         co2LineChart.isDragEnabled = true
 
-        co2LineChart.setOnChartValueSelectedListener(this);
+        co2LineChart.setOnChartValueSelectedListener(this)
 
         // enable value highlighting
         co2LineChart.isHighlightPerTapEnabled = true
