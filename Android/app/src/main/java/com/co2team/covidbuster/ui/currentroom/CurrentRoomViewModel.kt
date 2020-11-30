@@ -9,12 +9,8 @@ class CurrentRoomViewModel : ViewModel() {
     private val currentRoomData = MutableLiveData<RoomCo2Data>()
     val roomData: MutableLiveData<RoomCo2Data> get() = currentRoomData
 
-    private val currentRoom = MutableLiveData<String>()
-    val roomName: MutableLiveData<String> get() = currentRoom
-
-    fun setRoomName(name: String) {
-        roomName.value = name
-    }
+    var roomName = ""
+    var roomId = 1
 
     fun setRoomData(data: RoomCo2Data) {
         currentRoomData.value = data

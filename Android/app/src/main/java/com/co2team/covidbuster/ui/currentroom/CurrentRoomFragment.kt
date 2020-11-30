@@ -61,9 +61,8 @@ class CurrentRoomFragment : Fragment() {
 
         historyButton.setOnClickListener {
             val intent = Intent(requireActivity().applicationContext, HistoryActivity::class.java)
-            // TODO: GET ROOM ID AND ROOM NAME FROM nRF
-            //intent.putExtra(EXTRA_ROOM_ID, roomData[position]!!.id)
-            //intent.putExtra(EXTRA_ROOM_NAME, roomData[position]!!.name)
+            intent.putExtra(EXTRA_ROOM_ID, viewModel.roomId)
+            intent.putExtra(EXTRA_ROOM_NAME, viewModel.roomName)
             startActivity(intent)
         }
     }
@@ -83,7 +82,7 @@ class CurrentRoomFragment : Fragment() {
         co2Label.text = getString(R.string.current_room_fragment_co2_concentration)
         ppmLabel.text = roomData.co2ppm.toString()
         historyButton.visibility = View.VISIBLE
-        roomLabel.text = viewModel.roomName.value
+        roomLabel.text = viewModel.roomName
         when {
             roomData.co2ppm < WARNING_CO2_THRESHOLD -> {
                 statusImg.setImageResource(R.drawable.safe)

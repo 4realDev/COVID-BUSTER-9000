@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
                 backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
                 roomViewModel.setRoomName(Utils.Companion.getRoomName(sensorData.getRoomId()));
+                roomViewModel.setRoomId(sensorData.getRoomId());
                 roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
 
                 // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
