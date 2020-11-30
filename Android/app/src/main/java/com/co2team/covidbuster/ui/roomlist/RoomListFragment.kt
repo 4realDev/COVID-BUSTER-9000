@@ -13,7 +13,8 @@ import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomData
 import com.co2team.covidbuster.ui.history.HistoryActivity
 
-const val EXTRA_ROOMID = "com.co2team.covidbuster.ui.roomlist.ROOMID"
+const val EXTRA_ROOM_ID = "com.co2team.covidbuster.ui.roomlist.ROOMID"
+const val EXTRA_ROOM_NAME = "com.co2team.covidbuster.ui.roomlist.ROOMNAME"
 
 class RoomListFragment : ListFragment() {
 
@@ -42,10 +43,9 @@ class RoomListFragment : ListFragment() {
         super.onListItemClick(l, v, position, id)
         // TODO: Open history view here
         val intent = Intent(requireActivity().applicationContext, HistoryActivity::class.java)
-        intent.putExtra(EXTRA_ROOMID, roomData[position]!!.id)
+        intent.putExtra(EXTRA_ROOM_ID, roomData[position]!!.id)
+        intent.putExtra(EXTRA_ROOM_NAME, roomData[position]!!.name)
         startActivity(intent)
-
-        println("Should open history view for room with ID: " + roomData[position]!!.id)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

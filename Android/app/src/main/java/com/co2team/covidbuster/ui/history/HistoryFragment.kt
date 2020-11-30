@@ -19,6 +19,7 @@ import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.service.BackendService
 import com.co2team.covidbuster.service.OnDataReceivedCallback
+import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_ID
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -32,7 +33,13 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     companion object {
-        fun newInstance() = HistoryFragment()
+        fun newInstance(roomId: Int): HistoryFragment{
+            val fragment = HistoryFragment()
+            val args = Bundle()
+            args.putInt(EXTRA_ROOM_ID, roomId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     private lateinit var viewModel: HistoryViewModel
@@ -53,10 +60,14 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private val backendService = BackendService()
     private val chartData = ArrayList<RoomCo2Data>()
     private val roomLabelList = ArrayList<String>()
+    private var roomId: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.history_fragment, container, false)
+
+        val args = arguments
+        roomId = args!!.getInt(EXTRA_ROOM_ID)
 
         co2LineChart = view.findViewById(R.id.co2LineChart)
         lastTimeUpdatedTime = view.findViewById(R.id.lastTimeUpdatedTimeTv)
