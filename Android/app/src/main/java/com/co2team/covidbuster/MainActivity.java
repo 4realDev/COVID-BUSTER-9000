@@ -74,8 +74,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
                 ignoreValuesForNextTwoSeconds = true;
-
                 handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
+
+                // If no data was read for the last 10s, we assume that we've left the rum. Thus clear the current room data.
+                handler.postDelayed(() -> {
+                    if(roomViewModel.getLastUpdated().isBefore(LocalDateTime.now().minusSeconds(10))) {
+                        roomViewModel.clearData();
+                    }
+                }, 10000);
             }
         }
 

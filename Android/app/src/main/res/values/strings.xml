@@ -17,7 +17,7 @@
     <string name="current_room_fragment_safe">safe</string>
     <string name="current_room_fragment_dangerous">dangerous</string>
     <string name="current_room_fragment_warning">warning</string>
-    <string name="current_room_fragment_no_room_found">no room found</string>
+    <string name="current_room_fragment_no_room_found">currently not in a room</string>
     <string name="current_room_fragment_status_image">status image</string>
 
     <string name="room_list_room_icon_description">Room Icon</string>

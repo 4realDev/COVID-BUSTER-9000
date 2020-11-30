@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import com.co2team.covidbuster.Constants.DANGEROUS_CO2_THRESHOLD
 import com.co2team.covidbuster.Constants.WARNING_CO2_THRESHOLD
 import com.co2team.covidbuster.R
+import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.ui.history.HistoryActivity
 
 
@@ -44,33 +45,50 @@ class CurrentRoomFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        statusLabel.text = getString(R.string.current_room_fragment_no_room_found)
-        statusImg.setImageResource(R.drawable.ic_not_found)
+        setInitialState()
 
         viewModel.roomData.observe(viewLifecycleOwner, { roomData ->
-            co2Label.text = getString(R.string.current_room_fragment_co2_level_label,roomData.co2ppm.toString())
-            when {
-                roomData.co2ppm < WARNING_CO2_THRESHOLD -> {
-                    statusImg.setImageResource(R.drawable.safe)
-                    statusLabel.text = getString(R.string.current_room_fragment_safe)
-                    explanationLabel.text = "ℹ️ This room is safe to stay in :)"
-                }
-                roomData.co2ppm > DANGEROUS_CO2_THRESHOLD -> {
-                    statusImg.setImageResource(R.drawable.danger)
-                    statusLabel.text = getString(R.string.current_room_fragment_dangerous)
-                    explanationLabel.text = "ℹ️ Please ventilate this room immediately! The measured co2 levels indicate, that there was no exchange of fresh air inside this room."
-                }
-                else -> {
-                    statusImg.setImageResource(R.drawable.warning)
-                    statusLabel.text = getString(R.string.current_room_fragment_warning)
-                    explanationLabel.text = "ℹ️ The air is getting thick in here. Consider ventilating this room to keep the infection rate low."
-                }
+            if(roomData != null) {
+                updateRoomData(roomData)
+            } else {
+                setInitialState()
             }
+
         })
 
         historyButton.setOnClickListener {
             val intent = Intent(context, HistoryActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun setInitialState() {
+        statusLabel.text = getString(R.string.current_room_fragment_no_room_found)
+        statusImg.setImageResource(R.drawable.ic_not_found)
+        explanationLabel.text = ""
+        co2Label.text = ""
+        historyButton.visibility = View.GONE
+    }
+
+    private fun updateRoomData(roomData: RoomCo2Data) {
+        co2Label.text = getString(R.string.current_room_fragment_co2_level_label, roomData.co2ppm.toString())
+        historyButton.visibility = View.VISIBLE
+        when {
+            roomData.co2ppm < WARNING_CO2_THRESHOLD -> {
+                statusImg.setImageResource(R.drawable.safe)
+                statusLabel.text = getString(R.string.current_room_fragment_safe)
+                explanationLabel.text = "ℹ️ This room is safe to stay in :)"
+            }
+            roomData.co2ppm > DANGEROUS_CO2_THRESHOLD -> {
+                statusImg.setImageResource(R.drawable.danger)
+                statusLabel.text = getString(R.string.current_room_fragment_dangerous)
+                explanationLabel.text = "ℹ️ Please ventilate this room immediately! The measured co2 levels indicate, that there was no exchange of fresh air inside this room."
+            }
+            else -> {
+                statusImg.setImageResource(R.drawable.warning)
+                statusLabel.text = getString(R.string.current_room_fragment_warning)
+                explanationLabel.text = "ℹ️ The air is getting thick in here. Consider ventilating this room to keep the infection rate low."
+            }
         }
     }
 }
