@@ -22,26 +22,19 @@
 /*****       GLOBAL VARIABLES      *****/
 /***************************************/
 
-#define MINCO2RANDOM 300
-#define MAXCO2RANDOM 600
-
-#define MINTEMPRANDOM 20
-#define MAXTEMPRANDOM 26
-
-#define MINHUMIDRANDOM 30
-#define MAXHUMIDRANDOM 40
-
 static SCD30 co2Sensor;
 static bool sensorAttached;
 
-static uint16_t randomCo2Value = 300;
+static uint16_t randomCo2Value = 800;
+static uint8_t randomTemperatureValue = 23;
+static uint8_t randomHumidityValue = 35;
+
 
 /***************************************/
 /***** PRIVATE FUNCTION PROTOTYPES *****/
 /***************************************/
 
 static void setToDangerousCallback(void);
-
 
 /***************************************/
 /*****       PUBLIC FUNCTIONS      *****/
@@ -96,8 +89,8 @@ uint8_t hwa_co2sensor_getTemperature(void){
     if(sensorAttached){
         return co2Sensor.getTemperature();
     } else {
-        
-        return (uint8_t)random(MINTEMPRANDOM, MAXTEMPRANDOM);
+        randomTemperatureValue += (uint8_t)random(0, 0);
+        return randomTemperatureValue;
     }
     
 }
@@ -114,7 +107,8 @@ uint8_t hwa_co2sensor_getHumidity(void){
     if(sensorAttached){
         return co2Sensor.getHumidity();
     } else {
-        return (uint8_t)random(MINHUMIDRANDOM, MAXHUMIDRANDOM);
+        randomHumidityValue += (uint8_t)random(0, 0);
+        return randomHumidityValue;
     }
 }
 
@@ -151,6 +145,6 @@ bool hwa_co2sensor_isAttached(void){
 /***************************************/
 
 void setToDangerousCallback(void){
-    randomCo2Value = MAX_WARNING_CO2_VALUE+20;
+    randomCo2Value = MIN_DANGER_CO2_VALUE+20;
 }
 

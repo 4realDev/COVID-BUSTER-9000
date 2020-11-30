@@ -18,5 +18,5 @@
 #define ROOMIDENTIFIER 0x1
 
 // Health definitions
-#define MAX_NORMAL_CO2_VALUE 500    // in ppm
-#define MAX_WARNING_CO2_VALUE 800    // in ppm
+#define MIN_WARNING_CO2_VALUE 1000    // in ppm
+#define MIN_DANGER_CO2_VALUE 2000    // in ppm

@@ -75,14 +75,14 @@ void loop() {
         }
         case CONTROL: {
             localValue = app_measurement_getCurrentValue();
-            if(localValue.co2Value < MAX_NORMAL_CO2_VALUE){
+            if(localValue.co2Value < MIN_WARNING_CO2_VALUE){
                 app_alert_setAlert(NORMAL);
-            } else if(localValue.co2Value >= MAX_NORMAL_CO2_VALUE && localValue.co2Value < MAX_WARNING_CO2_VALUE){
+            } else if(localValue.co2Value >= MIN_WARNING_CO2_VALUE && localValue.co2Value < MIN_DANGER_CO2_VALUE){
                 app_alert_setAlert(WARNING);
-            } else if(localValue.co2Value >= MAX_WARNING_CO2_VALUE){
+            } else if(localValue.co2Value >= MIN_DANGER_CO2_VALUE){
                 app_alert_setAlert(DANGER);
             } else{
-                //should not be here
+                //TODO: ERROR HANDLING: SHOULD NOT BE HERE
             }
 
             if(localValue.batteryValue < 20){
@@ -100,13 +100,14 @@ void loop() {
             newPayload.temperatureValue = localValue.temperatureValue;
             newPayload.humidityValue = localValue.humidtyValue;
             newPayload.batteryLevel = localValue.batteryValue;
+            Serial.println(localValue.co2Value);
             com_ble_setPayload(newPayload);
             delay(100);
             state = IDLE;
             break;
         }
         default: {
-            //should not be here!
+            //TODO: ERROR HANDLING: SHOULD NOT BE HERE!
             break;
         }
 
