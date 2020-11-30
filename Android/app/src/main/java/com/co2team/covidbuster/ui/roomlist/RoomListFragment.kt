@@ -21,9 +21,6 @@ class RoomListFragment : ListFragment() {
         fun newInstance() = RoomListFragment()
     }
 
-    private lateinit var viewModel: RoomListViewModel
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -42,8 +39,6 @@ class RoomListFragment : ListFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(RoomListViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

@@ -13,13 +13,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.co2team.covidbuster.util.Constants
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.service.BackendService
 import com.co2team.covidbuster.service.OnDataReceivedCallback
 import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_ID
+import com.co2team.covidbuster.util.Constants
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -42,7 +41,6 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         }
     }
 
-    private lateinit var viewModel: HistoryViewModel
     private lateinit var co2LineChart: LineChart
 
     private lateinit var lastTimeUpdatedTime: TextView
@@ -80,7 +78,6 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(HistoryViewModel::class.java)
 
         backendService.readCo2MeasurementsForRoom(roomId, object : OnDataReceivedCallback {
             override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
