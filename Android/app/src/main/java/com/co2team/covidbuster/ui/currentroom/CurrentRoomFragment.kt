@@ -10,8 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.co2team.covidbuster.Constants.DANGEROUS_CO2_THRESHOLD
-import com.co2team.covidbuster.Constants.WARNING_CO2_THRESHOLD
+import com.co2team.covidbuster.util.Constants.DANGEROUS_CO2_THRESHOLD
+import com.co2team.covidbuster.util.Constants.WARNING_CO2_THRESHOLD
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.ui.history.HistoryActivity
@@ -25,8 +25,8 @@ class CurrentRoomFragment : Fragment() {
 
     private lateinit var historyButton: Button
     private lateinit var co2Label: TextView
+    private lateinit var roomLabel: TextView
     private lateinit var ppmLabel: TextView
-    private lateinit var statusLabel: TextView
     private lateinit var explanationLabel: TextView
     private lateinit var statusImg: ImageView
 
@@ -38,7 +38,7 @@ class CurrentRoomFragment : Fragment() {
         historyButton = view.findViewById(R.id.history_fragment_button)
         co2Label = view.findViewById(R.id.labelCurrentCo2)
         ppmLabel = view.findViewById(R.id.labelppm)
-        statusLabel = view.findViewById(R.id.labelStatus)
+        roomLabel = view.findViewById(R.id.labelRoomName)
         explanationLabel = view.findViewById(R.id.labelExplanation)
         statusImg = view.findViewById(R.id.imgSafetyStatus)
         return view
@@ -65,32 +65,33 @@ class CurrentRoomFragment : Fragment() {
     }
 
     private fun setInitialState() {
-        statusLabel.text = getString(R.string.current_room_fragment_no_room_found)
+        explanationLabel.text = getString(R.string.current_room_fragment_no_room_found)
         statusImg.setImageResource(R.drawable.ic_not_found)
-        explanationLabel.text = ""
-        co2Label.text = ""
         historyButton.visibility = View.GONE
         co2Label.visibility = View.GONE
+        co2Label.text = ""
+        roomLabel.text = ""
+        ppmLabel.text = ""
     }
 
     private fun updateRoomData(roomData: RoomCo2Data) {
         co2Label.visibility = View.VISIBLE
-        co2Label.text = getString(R.string.current_co2_concentration_in_ppm)
+        co2Label.text = getString(R.string.current_room_fragment_co2_concentration)
         ppmLabel.text = roomData.co2ppm.toString()
         historyButton.visibility = View.VISIBLE
-        statusLabel.visibility = View.GONE
+        roomLabel.text = viewModel.roomName.value
         when {
             roomData.co2ppm < WARNING_CO2_THRESHOLD -> {
                 statusImg.setImageResource(R.drawable.safe)
-                explanationLabel.text = "ℹ️ This room is safe to stay in :)"
+                explanationLabel.text = getString(R.string.current_room_fragment_safe_to_stay_text)
             }
             roomData.co2ppm > DANGEROUS_CO2_THRESHOLD -> {
                 statusImg.setImageResource(R.drawable.danger)
-                explanationLabel.text = "ℹ️ Please ventilate this room immediately! The measured co2 levels indicate, that there was no exchange of fresh air inside this room."
+                explanationLabel.text = getString(R.string.current_room_fragment_danger_text)
             }
             else -> {
                 statusImg.setImageResource(R.drawable.warning)
-                explanationLabel.text = "ℹ️ The air is getting thick in here. Consider ventilating this room to keep the infection rate low."
+                explanationLabel.text = getString(R.string.current_room_fragment_warning_text)
             }
         }
     }

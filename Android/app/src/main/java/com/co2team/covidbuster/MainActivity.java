@@ -32,6 +32,7 @@ import com.co2team.covidbuster.ui.TabAdapter;
 import com.co2team.covidbuster.ui.currentroom.CurrentRoomFragment;
 import com.co2team.covidbuster.ui.currentroom.CurrentRoomViewModel;
 import com.co2team.covidbuster.ui.roomlist.RoomListFragment;
+import com.co2team.covidbuster.util.Utils;
 import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
 
                 backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
+                roomViewModel.setRoomName(Utils.Companion.getRoomName(sensorData.getRoomId()));
                 roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
 
                 // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
