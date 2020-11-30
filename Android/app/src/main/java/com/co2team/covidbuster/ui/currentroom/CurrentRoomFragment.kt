@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.co2team.covidbuster.Constants.DANGEROUS_CO2_THRESHOLD
-import com.co2team.covidbuster.Constants.SAFE_CO2_THRESHOLD
+import com.co2team.covidbuster.Constants.WARNING_CO2_THRESHOLD
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.ui.history.HistoryActivity
 
@@ -47,7 +47,7 @@ class CurrentRoomFragment : Fragment() {
         viewModel.roomData.observe(viewLifecycleOwner, { roomData ->
             co2Label.text = getString(R.string.current_room_fragment_co2_level_label,roomData.co2ppm.toString())
             when {
-                roomData.co2ppm < SAFE_CO2_THRESHOLD -> {
+                roomData.co2ppm < WARNING_CO2_THRESHOLD -> {
                     statusImg.setImageResource(R.drawable.safe)
                     statusLabel.text = getString(R.string.current_room_fragment_safe)
                     explanationLabel.text = "ℹ️ This room is safe to stay in :)"
