@@ -33,7 +33,7 @@ class BackendService {
         val request = Request.Builder().url("${READ_URL}$roomId.json?average=15&round=0").build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
+                Log.d(TAG, "Error reading!")
             }
 
             @Throws(IOException::class)

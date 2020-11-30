@@ -12,7 +12,6 @@ import java.util.*
 
 class ThingsSpeakResponseParseService {
 
-
     @Throws(JSONException::class)
     fun parseJsonResponse(jsonResponse: String, roomId: Int): List<RoomCo2Data> {
         val roomData: MutableList<RoomCo2Data> = ArrayList()

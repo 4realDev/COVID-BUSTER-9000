@@ -1,0 +1,27 @@
+{
+  "channel": {
+    "id": 1224181,
+    "name": "COVID BUSTER 2000",
+    "latitude": "0.0",
+    "longitude": "0.0",
+    "field1": "room 1",
+    "field2": "room 2",
+    "created_at": "2020-11-09T16:54:10Z",
+    "updated_at": "2020-11-23T16:08:34Z",
+    "last_entry_id": 645
+  },
+  "feeds": [
+    {
+      "created_at": "2020-11-29T22:15:00Z",
+      "field1": "432"
+    },
+    {
+      "created_at": "2020-11-29T22:30:00Z",
+      "field1": "449"
+    },
+    {
+      "created_at": "2020-11-29T22:45:00Z",
+      "field1": null
+    }
+  ]
+}
