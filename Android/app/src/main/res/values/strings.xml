@@ -12,13 +12,10 @@
     <string name="history_fragment_warning_label">Warning</string>
     <string name="history_fragment_danger_label">Danger</string>
 
-    <string name="current_room_fragment_history_button">History</string>
-    <string name="current_room_fragment_co2_level_label">Current co2 level: %1$s</string>
-    <string name="current_room_fragment_safe">safe</string>
-    <string name="current_room_fragment_dangerous">dangerous</string>
-    <string name="current_room_fragment_warning">warning</string>
+    <string name="current_room_fragment_history_button">Show Room History</string>
     <string name="current_room_fragment_no_room_found">currently not in a room</string>
     <string name="current_room_fragment_status_image">status image</string>
 
     <string name="room_list_room_icon_description">Room Icon</string>
+    <string name="current_co2_concentration_in_ppm">Current CO2 concentration in ppm</string>
 </resources>

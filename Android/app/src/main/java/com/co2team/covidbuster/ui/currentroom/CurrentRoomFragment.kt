@@ -25,6 +25,7 @@ class CurrentRoomFragment : Fragment() {
 
     private lateinit var historyButton: Button
     private lateinit var co2Label: TextView
+    private lateinit var ppmLabel: TextView
     private lateinit var statusLabel: TextView
     private lateinit var explanationLabel: TextView
     private lateinit var statusImg: ImageView
@@ -36,6 +37,7 @@ class CurrentRoomFragment : Fragment() {
         val view = inflater.inflate(R.layout.current_room_fragment, container, false)
         historyButton = view.findViewById(R.id.history_fragment_button)
         co2Label = view.findViewById(R.id.labelCurrentCo2)
+        ppmLabel = view.findViewById(R.id.labelppm)
         statusLabel = view.findViewById(R.id.labelStatus)
         explanationLabel = view.findViewById(R.id.labelExplanation)
         statusImg = view.findViewById(R.id.imgSafetyStatus)
@@ -68,25 +70,26 @@ class CurrentRoomFragment : Fragment() {
         explanationLabel.text = ""
         co2Label.text = ""
         historyButton.visibility = View.GONE
+        co2Label.visibility = View.GONE
     }
 
     private fun updateRoomData(roomData: RoomCo2Data) {
-        co2Label.text = getString(R.string.current_room_fragment_co2_level_label, roomData.co2ppm.toString())
+        co2Label.visibility = View.VISIBLE
+        co2Label.text = getString(R.string.current_co2_concentration_in_ppm)
+        ppmLabel.text = roomData.co2ppm.toString()
         historyButton.visibility = View.VISIBLE
+        statusLabel.visibility = View.GONE
         when {
             roomData.co2ppm < WARNING_CO2_THRESHOLD -> {
                 statusImg.setImageResource(R.drawable.safe)
-                statusLabel.text = getString(R.string.current_room_fragment_safe)
                 explanationLabel.text = "ℹ️ This room is safe to stay in :)"
             }
             roomData.co2ppm > DANGEROUS_CO2_THRESHOLD -> {
                 statusImg.setImageResource(R.drawable.danger)
-                statusLabel.text = getString(R.string.current_room_fragment_dangerous)
                 explanationLabel.text = "ℹ️ Please ventilate this room immediately! The measured co2 levels indicate, that there was no exchange of fresh air inside this room."
             }
             else -> {
                 statusImg.setImageResource(R.drawable.warning)
-                statusLabel.text = getString(R.string.current_room_fragment_warning)
                 explanationLabel.text = "ℹ️ The air is getting thick in here. Consider ventilating this room to keep the infection rate low."
             }
         }
