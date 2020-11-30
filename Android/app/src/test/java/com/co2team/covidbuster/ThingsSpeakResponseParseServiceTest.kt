@@ -14,7 +14,7 @@ class ThingsSpeakResponseParseServiceTest {
 
         val result = service.parseJsonResponse(testResponse, 1)
 
-        assertEquals(result[0].co2ppm,432)
-        assertEquals(result[1].co2ppm,449)
+        assertEquals(432, result[0].co2ppm)
+        assertEquals(449, result[1].co2ppm)
     }
 }
