@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.co2team.covidbuster.Constants
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.service.BackendService
@@ -41,9 +42,8 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private lateinit var lastTimeUpdatedSafetyStatus: TextView
 
     // Constants for limit lines
-    private val limitLineDangerThreshold = 395.0f
-    private val limitLineWarningThreshold = 375.0f
-    private val limitLineSafeThreshold = 325.0f
+    private val limitLineDangerThreshold = Constants.DANGEROUS_CO2_THRESHOLD
+    private val limitLineWarningThreshold = Constants.WARNING_CO2_THRESHOLD
 
     // "T" is used to split date from time inside a String -> 2007-12-03T10:15:30
     private val localDateTimeDelimiter = "T"
@@ -210,21 +210,16 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     private fun setupLimitLines() {
         co2LineChart.axisLeft.removeAllLimitLines()
-        val dangerLimit = LimitLine(limitLineDangerThreshold)
+        val dangerLimit = LimitLine(limitLineDangerThreshold.toFloat())
         dangerLimit.lineWidth = 1f
         dangerLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_danger_zone_red)
 
-        val warningLimit = LimitLine(limitLineWarningThreshold)
+        val warningLimit = LimitLine(limitLineWarningThreshold.toFloat())
         warningLimit.lineWidth = 1f
         warningLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_warning_zone_yellow)
 
-        val safeLimit = LimitLine(limitLineSafeThreshold)
-        safeLimit.lineWidth = 1f
-        safeLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_safe_zone_green)
-
         co2LineChart.axisLeft.addLimitLine(dangerLimit)
         co2LineChart.axisLeft.addLimitLine(warningLimit)
-        co2LineChart.axisLeft.addLimitLine(safeLimit)
     }
 
     private fun setupLegend() {
