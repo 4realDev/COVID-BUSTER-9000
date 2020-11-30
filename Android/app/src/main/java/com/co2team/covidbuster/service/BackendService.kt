@@ -30,7 +30,7 @@ class BackendService {
     }
 
     fun readCo2MeasurementsForRoom(roomId: Int, done: OnDataReceivedCallback) {
-        val request = Request.Builder().url("${READ_URL}$roomId.json?average=15&round=0").build()
+        val request = Request.Builder().url("${READ_URL}$roomId.json?average=10&round=0&days=1").build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d(TAG, "Error reading!")

@@ -13,14 +13,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.co2team.covidbuster.Constants
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.service.BackendService
 import com.co2team.covidbuster.service.OnDataReceivedCallback
 import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_ID
-import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_NAME
+import com.co2team.covidbuster.util.Constants
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -43,7 +41,6 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         }
     }
 
-    private lateinit var viewModel: HistoryViewModel
     private lateinit var co2LineChart: LineChart
 
     private lateinit var lastTimeUpdatedTime: TextView
@@ -81,19 +78,15 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(HistoryViewModel::class.java)
-        // TODO: Use the ViewModel
 
-        // TODO: insert the correct room ID
-        backendService.readCo2MeasurementsForRoom(roomIdExtra, object : OnDataReceivedCallback {
-            @SuppressLint("SetTextI18n")
-            override fun onSuccess(roomDataList: List<RoomCo2Data>) {
-                chartData.addAll(roomDataList)
+        backendService.readCo2MeasurementsForRoom(roomId, object : OnDataReceivedCallback {
+            override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
+                chartData.addAll(roomCo2Data)
 
                 val data = createOrLoadLineData()
                 val set = createOrLoadLineDataSet(data)
 
-                for (roomData in roomDataList) {
+                for (roomData in roomCo2Data) {
                     println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + " on date: " + roomData.created)
                     val yAxisRepresentingCo2Ppm = roomData.co2ppm.toFloat()
 
@@ -106,7 +99,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
                 }
 
                 // Update Line Graph
-                updateUIElementsAccordingToRoomData(roomDataList.last(), set)
+                updateUIElementsAccordingToRoomData(roomCo2Data.last(), set)
 
                 co2LineChart.data.notifyDataChanged()
                 co2LineChart.notifyDataSetChanged()

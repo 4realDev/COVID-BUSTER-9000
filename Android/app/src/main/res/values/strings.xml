@@ -18,7 +18,11 @@
     <string name="current_room_fragment_history_button">Show Room History</string>
     <string name="current_room_fragment_no_room_found">currently not in a room</string>
     <string name="current_room_fragment_status_image">status image</string>
+    <string name="current_room_fragment_safe_to_stay_text">ℹ️ This room is safe to stay in :)</string>
+    <string name="current_room_fragment_danger_text">ℹ️ Please ventilate this room immediately! The measured co2 levels indicate, that there was no exchange of fresh air inside this room.</string>
+    <string name="current_room_fragment_warning_text">ℹ️ The air is getting thick in here. Consider ventilating this room to keep the infection rate low.</string>
+    <string name="current_room_fragment_co2_concentration">Current CO2 concentration in ppm</string>
 
     <string name="room_list_room_icon_description">Room Icon</string>
-    <string name="current_co2_concentration_in_ppm">Current CO2 concentration in ppm</string>
+
 </resources>
