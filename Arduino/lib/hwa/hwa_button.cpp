@@ -1,6 +1,6 @@
 /**
  * 
- * @file hwa_button.c
+ * @file hwa_button.cpp
  * @author Stefan Wick
  * 
  * @brief Button HW Layer

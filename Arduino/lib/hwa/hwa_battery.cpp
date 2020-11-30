@@ -1,6 +1,6 @@
 /**
  * 
- * @file hwa_battery.c
+ * @file hwa_battery.cpp
  * @author Stefan Wick
  * 
  * @brief Battery (basically only for battery read out)
@@ -48,12 +48,10 @@ float hwa_button_getBatteryStatus(void){
     measuredVBat *= BATTERYFULLVOLTAGE;
     measuredVBat /= 512;
     int batteryStorage = ((measuredVBat-BATTERYEMPTYVOLTAGE)*100)/(BATTERYFULLVOLTAGE-BATTERYEMPTYVOLTAGE);
-
     if(batteryStorage < 0){
         batteryStorage = 0;
     } else if(batteryStorage > 100){
         batteryStorage = 100;
     }
-
     return (batteryStorage);
 }

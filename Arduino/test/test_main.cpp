@@ -27,9 +27,6 @@
 /*****       GLOBAL VARIABLES      *****/
 /***************************************/
 
-uint8_t i = 0;
-uint8_t max_blinks = 5;
-
 /***************************************/
 /*****    UNIT TESTS PROTOTYPES    *****/
 /***************************************/
@@ -39,6 +36,7 @@ void test_led(void);
 void test_sensor(void);
 void test_payload(void);
 void test_alert(void);
+void test_measurements(void);
 
 /***************************************/
 /*****            SETUP            *****/
@@ -90,6 +88,7 @@ void loop() {
     RUN_TEST(test_sensor);
     RUN_TEST(test_payload);
     RUN_TEST(test_alert);
+    RUN_TEST(test_measurements);
     UNITY_END(); // stop unit testing
 }
 
@@ -151,13 +150,13 @@ void test_led(void){
  * @test 
  *      The following tests are repeated five times
  *      Step 1: Check CO2-sensor
- *          - if sensor not attached: check if range is between 300 and 600ppm
+ *          - if sensor not attached: check if range is between 780 and 820ppm
  *          - if sensor is attached: check is value returns 0 (sensor not working)
  *      Step 2: Check Temperature sensor
- *          - if sensor not attached: check if range is between 20 and 26 degrees
+ *          - if sensor not attached: check if temperature has value of 23
  *          - if sensor is attached: check is value returns 0 (sensor not working)
  *      Step 3: Check humidity sensor
- *          - if sensor not attached: check if range is between 30 and 40 degrees
+ *          - if sensor not attached: check if humidity has value of 35
  *          - if sensor is attached: check is value returns 0 (sensor not working)
  * 
  */
@@ -165,8 +164,8 @@ void test_sensor(void){
     for(uint8_t counter = 0; counter < 5; counter++){
         if(!hwa_co2sensor_isAttached()){
             TEST_ASSERT_INT_WITHIN(780, 820, hwa_co2sensor_getCO2());
-            TEST_ASSERT_INT_WITHIN(23, 23, hwa_co2sensor_getTemperature());
-            TEST_ASSERT_INT_WITHIN(35, 35, hwa_co2sensor_getHumidity());
+            TEST_ASSERT_EQUAL(23, hwa_co2sensor_getTemperature());
+            TEST_ASSERT_EQUAL(35, hwa_co2sensor_getHumidity());
         } else {
             TEST_ASSERT(0 != hwa_co2sensor_getCO2());
             TEST_ASSERT(0 != hwa_co2sensor_getTemperature());
@@ -227,13 +226,61 @@ void test_payload(void){
  *      Step 1: Check normal state
  *      Step 2: Check warning state
  *      Step 3: Check danger state
+ *      Step 4: Check battery critical LED
+ *      Step 5: Check battery normal LED
  * 
  */
 void test_alert(void){
     app_alert_setAlert(NORMAL);
-    TEST_ASSERT_EQUAL(0x00ff00, hwa_led_getColor());
+    TEST_ASSERT_EQUAL_MESSAGE(0x00ff00, hwa_led_getColor(), "NeoPixel not green!");
+
     app_alert_setAlert(WARNING);
-    TEST_ASSERT_EQUAL(0xff4500, hwa_led_getColor());
+    TEST_ASSERT_EQUAL_MESSAGE(0xff4500, hwa_led_getColor(), "NeoPixel not orange!");
+
     app_alert_setAlert(DANGER);
-    TEST_ASSERT_EQUAL(0xff0000, hwa_led_getColor());
+    TEST_ASSERT_EQUAL_MESSAGE(0xff0000, hwa_led_getColor(), "NeoPixel not red!");
+
+    app_alert_setBattery(CRITICAL);
+    TEST_ASSERT_EQUAL_MESSAGE(HIGH, digitalRead(REDPIN), "LED not red!");
+
+    app_alert_setBattery(OK);
+    TEST_ASSERT_EQUAL_MESSAGE(LOW, digitalRead(REDPIN), "LED is red!");
+}
+
+
+/**
+ * @brief This test checks if the sensors return some meaningful values (or if they are out of range)
+ * 
+ * @test 
+ *      The following tests are repeated five times
+ *      Step 1: Check CO2-sensor
+ *          - if sensor not attached: check if range is between 780 and 820ppm
+ *          - if sensor is attached: check is value returns 0 (sensor not working)
+ *      Step 2: Check Temperature sensor
+ *          - if sensor not attached: check if temperature has value of 23
+ *          - if sensor is attached: check is value returns 0 (sensor not working)
+ *      Step 3: Check humidity sensor
+ *          - if sensor not attached: check if humidity has value of 35
+ *          - if sensor is attached: check is value returns 0 (sensor not working)
+ *      Step 4: Check battery status
+ *          - if sensor not attached: check if battery has value of 100
+ *          - if sensor is attached: check if batter has value of 100
+ * 
+ */
+void test_measurements(void){
+    for(uint8_t counter = 0; counter < 5; counter++){
+        app_measurement_check();
+        measurementValue_t currentValues = app_measurement_getCurrentValue();
+        if(!hwa_co2sensor_isAttached()){
+            TEST_ASSERT_INT_WITHIN(780, 820, currentValues.co2Value);
+            TEST_ASSERT_EQUAL(23, currentValues.temperatureValue);
+            TEST_ASSERT_EQUAL(35, currentValues.humidtyValue);
+            TEST_ASSERT_EQUAL(100,currentValues.batteryValue);
+        } else {
+            TEST_ASSERT(0 != currentValues.co2Value);
+            TEST_ASSERT(0 != currentValues.temperatureValue);
+            TEST_ASSERT(0 != currentValues.humidtyValue);
+            TEST_ASSERT_EQUAL(100,currentValues.batteryValue);
+        }
+    }
 }

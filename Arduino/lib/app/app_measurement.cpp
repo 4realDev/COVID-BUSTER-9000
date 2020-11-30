@@ -1,6 +1,6 @@
 /**
  * 
- * @file app_measurement.c
+ * @file app_measurement.cpp
  * @author Stefan Wick
  * 
  * @brief Applicationfile for the measurements

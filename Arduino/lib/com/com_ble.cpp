@@ -1,6 +1,6 @@
 /**
  * 
- * @file com_ble.c
+ * @file com_ble.cpp
  * @author Stefan Wick
  * 
  * @brief Bluetooth Low Energy (BLE)

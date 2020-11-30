@@ -1,6 +1,6 @@
 /**
  * 
- * @file app_altert.c
+ * @file app_alert.cpp
  * @author Stefan Wick
  * 
  * @brief Applicationfile for the alert state
@@ -83,7 +83,4 @@ void app_alert_setBattery(batteryState_t state){
     }else if (state == CRITICAL){
         hwa_led_setStatusLED(RED);
     }
-    
 }
-
-

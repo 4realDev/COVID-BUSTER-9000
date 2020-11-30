@@ -15,7 +15,7 @@
 
 //Room definitions
 #define ROOMNAME "ZL6.0"
-#define ROOMIDENTIFIER 0x1
+#define ROOMIDENTIFIER 0x2
 
 // CO2 definitions
 #define MIN_WARNING_CO2_VALUE 1000    // in ppm

@@ -1,6 +1,6 @@
 /**
  * 
- * @file hwa_co2sensor.c
+ * @file hwa_co2sensor.cpp
  * @author Stefan Wick
  * 
  * @brief CO2-Sensor HW Layer
@@ -56,8 +56,6 @@ void hwa_co2sensor_init(void){
     } else {
         sensorAttached = true;
     }
-
-
 }
 
 /**
@@ -91,8 +89,7 @@ uint8_t hwa_co2sensor_getTemperature(void){
     } else {
         randomTemperatureValue += (uint8_t)random(0, 0);
         return randomTemperatureValue;
-    }
-    
+    } 
 }
 
 /**
