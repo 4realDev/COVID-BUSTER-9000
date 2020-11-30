@@ -1,13 +1,10 @@
 package com.co2team.covidbuster.ui.history
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.co2team.covidbuster.R
-import com.co2team.covidbuster.ui.currentroom.CurrentRoomFragment
-import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOMID
-import com.co2team.covidbuster.ui.roomlist.RoomListFragment
+import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_ID
+import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_NAME
 
 
 class HistoryActivity : AppCompatActivity() {
@@ -17,11 +14,14 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(R.layout.history_activity)
 
         val intent = intent
-        val roomId = intent.getIntExtra(EXTRA_ROOMID, -1) //if it's a string you stored.
+        val roomId = intent.getIntExtra(EXTRA_ROOM_ID, -1)
+        val roomName = intent.getStringExtra(EXTRA_ROOM_NAME)
+
+        title = roomName
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, HistoryFragment.newInstance())
+                    .replace(R.id.container, HistoryFragment.newInstance(roomId))
                     .commitNow()
         }
     }
