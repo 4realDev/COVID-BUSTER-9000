@@ -47,15 +47,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsScanning = false;
     private BluetoothLeScanner mScanner;
     private final HandlerThread scanningThread = new HandlerThread("ScanningThread");
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private final BackendService backendService = new BackendService();
-
     private CurrentRoomViewModel roomViewModel;
-
     private boolean ignoreValuesForNextTwoSeconds = false;
 
     private final ScanCallback mScanCallback = new ScanCallback() {
-
 
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -76,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
                 ignoreValuesForNextTwoSeconds = true;
-                final Handler handler = new Handler(Looper.getMainLooper());
+
                 handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
             }
         }

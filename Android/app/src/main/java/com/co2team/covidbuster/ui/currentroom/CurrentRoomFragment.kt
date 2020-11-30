@@ -44,6 +44,9 @@ class CurrentRoomFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        statusLabel.text = getString(R.string.current_room_fragment_no_room_found)
+        statusImg.setImageResource(R.drawable.ic_not_found)
+
         viewModel.roomData.observe(viewLifecycleOwner, { roomData ->
             co2Label.text = getString(R.string.current_room_fragment_co2_level_label,roomData.co2ppm.toString())
             when {

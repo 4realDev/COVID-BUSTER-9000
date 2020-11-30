@@ -10,7 +10,7 @@
         android:id="@+id/checkBox"
         android:layout_width="30pt"
         android:layout_height="30pt"
-        android:contentDescription="@string/room_icon"
+        android:contentDescription="@string/room_list_room_icon_description"
         android:padding="2pt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
