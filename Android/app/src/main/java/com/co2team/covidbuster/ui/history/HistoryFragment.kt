@@ -79,7 +79,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        backendService.readCo2MeasurementsForRoom(roomId, object : OnDataReceivedCallback {
+        backendService.readCo2MeasurementsForRoom(roomIdExtra, object : OnDataReceivedCallback {
             override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
                 chartData.addAll(roomCo2Data)
 
