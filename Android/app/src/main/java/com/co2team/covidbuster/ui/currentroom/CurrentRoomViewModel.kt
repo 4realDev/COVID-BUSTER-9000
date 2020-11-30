@@ -1,0 +1,14 @@
+package com.co2team.covidbuster.ui.currentroom
+
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.co2team.covidbuster.model.RoomCo2Data
+
+class CurrentRoomViewModel : ViewModel() {
+    private val currentRoomData = MutableLiveData<RoomCo2Data>()
+    val roomData: MutableLiveData<RoomCo2Data> get() = currentRoomData
+
+    fun setRoomData(data: RoomCo2Data) {
+        currentRoomData.value = data
+    }
+}

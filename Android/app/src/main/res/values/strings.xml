@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Covid Buster</string>
+    <string name="history_fragment_last_time_updated_date">Date:</string>
+    <string name="history_fragment_last_time_updated_time">Time:</string>
+    <string name="history_fragment_last_time_updated_co2_value">CO2 value:</string>
+    <string name="history_fragment_last_time_updated_safety_status">Safety status:</string>
+
+    <string name="history_fragment_no_data_text">Loading room data…</string>
+
+    <string name="history_fragment_safe_label">Safe</string>
+    <string name="history_fragment_warning_label">Warning</string>
+    <string name="history_fragment_danger_label">Danger</string>
+
+    <string name="current_room_fragment_history_button">History</string>
+    <string name="current_room_fragment_co2_level_label">Current co2 level: %1$s</string>
+    <string name="current_room_fragment_safe">safe</string>
+    <string name="current_room_fragment_dangerous">dangerous</string>
+    <string name="current_room_fragment_warning">warning</string>
+    <string name="status_image">status image</string>
+    <string name="room_icon">Room Icon</string>
 </resources>

@@ -15,16 +15,28 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
+
 import android.util.Log;
 
+import com.co2team.covidbuster.model.RoomCo2Data;
 import com.co2team.covidbuster.model.SensorData;
 import com.co2team.covidbuster.service.BackendService;
+import com.co2team.covidbuster.ui.TabAdapter;
+import com.co2team.covidbuster.ui.currentroom.CurrentRoomFragment;
+import com.co2team.covidbuster.ui.currentroom.CurrentRoomViewModel;
+import com.co2team.covidbuster.ui.roomlist.RoomListFragment;
+import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,17 +50,34 @@ public class MainActivity extends AppCompatActivity {
 
     private final BackendService backendService = new BackendService();
 
+    private CurrentRoomViewModel roomViewModel;
+
+    private boolean ignoreValuesForNextTwoSeconds = false;
+
     private final ScanCallback mScanCallback = new ScanCallback() {
+
+
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
+            if (ignoreValuesForNextTwoSeconds) {
+                return;
+            }
+
             ScanRecord scanRecord = result.getScanRecord();
+
             if (scanRecord.getManufacturerSpecificData().size() >= 0) {
                 SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
 
                 Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
 
                 backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
+                roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
+
+                // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
+                ignoreValuesForNextTwoSeconds = true;
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
             }
         }
 
@@ -64,8 +93,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO remove this test call
-        backendService.readCo2MeasurementsForRoom(1);
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+
+        TabAdapter adapter = new TabAdapter(getSupportFragmentManager());
+        adapter.addFragment(RoomListFragment.Companion.newInstance(), "Room List");
+        adapter.addFragment(CurrentRoomFragment.Companion.newInstance(), "Current Room");
+
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+        roomViewModel = new ViewModelProvider(this).get(CurrentRoomViewModel.class);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+            @Override
+            public void onPageSelected(int position) { }
+
+            @Override
+            public void onPageScrollStateChanged(int state) { }
+        });
 
         Log.d(TAG, "onCreate");
         boolean hasBle = getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);

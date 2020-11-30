@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical"
+    tools:context=".ui.history.HistoryFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/lastTimeUpdatedHeadingTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="Last Time updated:"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/lastTimeUpdatedTimeTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/history_fragment_last_time_updated_time"
+            android:textAlignment="center"
+            android:textColor="@color/covidbuster_unselected"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/lastTimeUpdatedDateTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/history_fragment_last_time_updated_date"
+            android:textAlignment="center"
+            android:textColor="@color/covidbuster_unselected"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/lastTimeUpdatedCo2ValueTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/history_fragment_last_time_updated_co2_value"
+            android:textAlignment="center"
+            android:textColor="@color/covidbuster_unselected"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/lastTimeUpdatedSafetyStatusTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:text="@string/history_fragment_last_time_updated_safety_status"
+            android:textAlignment="center"
+            android:textColor="@color/covidbuster_unselected"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:paddingTop="24dp"
+        android:paddingBottom="6dp"
+        android:translationZ="6dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-6dp"
+            android:background="@color/transparent"
+            android:paddingStart="8dp"
+            android:text="CO2 ppm"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:translationZ="1dp"
+            tools:ignore="HardcodedText,RtlSymmetry,SmallSp" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/co2LineChart"
+            android:layout_width="match_parent"
+            android:layout_height="325dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="63dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="-63dp"
+            android:layout_marginEnd="32dp"
+            android:background="@color/transparent"
+            android:text="Time"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+</LinearLayout>
