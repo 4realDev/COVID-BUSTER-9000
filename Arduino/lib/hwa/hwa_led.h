@@ -28,6 +28,7 @@ typedef enum{
 
 void hwa_led_init(void);
 void hwa_led_setColor(uint8_t red, uint8_t green, uint8_t blue);
+uint32_t hwa_led_getColor(void);
 void hwa_led_setBrightness(float brightness);
 void hwa_led_clearColor(void);
 void hwa_led_setStatusLED(pinColor_t color);

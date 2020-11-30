@@ -13,7 +13,6 @@
 #include <hwa_co2sensor.h>
 #include <hwa_battery.h>
 #include <hwa_led.h>
-#include <hwa_button.h>
 
 /***************************************/
 /*****       GLOBAL VARIABLES      *****/

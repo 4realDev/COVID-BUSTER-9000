@@ -53,7 +53,18 @@ void hwa_led_setColor(uint8_t red, uint8_t green, uint8_t blue){
     color = pixel.Color(red, green, blue);
     pixel.setPixelColor(0, color);
     pixel.show();
+}
 
+/**
+ * 
+ * Get current color
+ * 
+ * @param none
+ * @return uint32_t color
+ * 
+ */
+uint32_t hwa_led_getColor(void){
+    return color;
 }
 
 
