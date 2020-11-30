@@ -24,7 +24,7 @@ typedef struct {
     uint8_t temperatureValue;
     uint8_t humidityValue;
     uint8_t batteryLevel;
-    int8_t rssi_at_1m;
+    int8_t rssiAt1m;
 } advData_t;
 
 /***************************************/

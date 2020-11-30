@@ -19,6 +19,9 @@
 /*****       GLOBAL VARIABLES      *****/
 /***************************************/
 
+#define RGB_GREEN 0,255,0
+#define RGB_ORANGE 255,69,0
+#define RGB_RED 255,0,0
 
 /***************************************/
 /*****       PUBLIC FUNCTIONS      *****/
@@ -47,20 +50,17 @@ void app_alert_init(void){
 void app_alert_setAlert(alert_t newAlertState){
     switch(newAlertState){
         case NORMAL: {
-            //Set LED to GREEN
-            hwa_led_setColor(0, 255, 0);
+            hwa_led_setColor(RGB_GREEN);
             hwa_led_setBrightness(50);
             break;
         }
         case WARNING: {
-            //Set LED to ORANGE
-            hwa_led_setColor(255, 69, 0);
+            hwa_led_setColor(RGB_ORANGE);
             hwa_led_setBrightness(50);
             break;
         }
         case DANGER: {
-            //Set LED to RED
-            hwa_led_setColor(255, 0, 0);
+            hwa_led_setColor(RGB_RED);
             hwa_led_setBrightness(50);
             break;
         }

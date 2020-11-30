@@ -23,13 +23,13 @@ static advData_t payloadData = {
         .manufacturer = MANUFACTURER_ID, //Change to manufacturer (0x004C = Apple)
         .beacon_type = BEACON_TYPE,    // proximity type
         .beacon_len = sizeof(payloadData)-4, // length without manufacturer, type and length
-        .identifier = IDENTIFIER,       // identifier for check
+        .identifier = IDENTIFIER,       // identifier for validation check
         .roomValue = ROOMIDENTIFIER,    // Room ID (hex no.)
         .co2Value = 0x0,    // current CO2 value
         .temperatureValue = 0x0,    //current temperature value
         .humidityValue = 0x0,   // current humidity value
         .batteryLevel = 0x0,    //current battery level
-        .rssi_at_1m = -40   // RSSI at 1m
+        .rssiAt1m = -40   // RSSI at 1m
 };
 
 /***************************************/
@@ -48,7 +48,7 @@ void com_ble_init(void){
     Bluefruit.setName(DEVICENAME);
     Bluefruit.ScanResponse.addName();
     Bluefruit.autoConnLed(true);
-    Bluefruit.setTxPower(0); //dBm
+    Bluefruit.setTxPower(0); // in dBm
 }
 
 /**
@@ -60,11 +60,10 @@ void com_ble_init(void){
  * 
  */
 void com_ble_startAdv(void){  
-    // Advertising packet
     Bluefruit.Advertising.addData(BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA,&payloadData,sizeof(payloadData));
     Bluefruit.Advertising.setType(BLE_GAP_ADV_TYPE_NONCONNECTABLE_SCANNABLE_UNDIRECTED);
     Bluefruit.Advertising.restartOnDisconnect(true);
-    Bluefruit.Advertising.setInterval(160, 160);    // in unit of 0.625 ms
+    Bluefruit.Advertising.setInterval(160, 160); //in unit of 0.625 ms
     Bluefruit.Advertising.start(0); 
 }
 

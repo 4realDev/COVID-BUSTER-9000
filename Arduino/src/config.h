@@ -13,10 +13,10 @@
 
 #define DEVICENAME "COVID BUSTER PERIPHERAL"
 
-//To be changed
+//Room definitions
 #define ROOMNAME "ZL6.0"
 #define ROOMIDENTIFIER 0x1
 
-// Health definitions
+// CO2 definitions
 #define MIN_WARNING_CO2_VALUE 1000    // in ppm
 #define MIN_DANGER_CO2_VALUE 2000    // in ppm
