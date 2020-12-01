@@ -52,7 +52,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     // Constants for limit lines
     private val limitLineDangerThreshold = Constants.DANGEROUS_CO2_THRESHOLD
-    private val limitLineWarningThreshold = 400 //Constants.WARNING_CO2_THRESHOLD
+    private val limitLineWarningThreshold = Constants.WARNING_CO2_THRESHOLD
 
     // "T" is used to split date from time inside a String -> 2007-12-03T10:15:30
     private val localDateTimeDelimiter = "T"
