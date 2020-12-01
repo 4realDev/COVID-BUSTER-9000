@@ -15,7 +15,7 @@
     <string name="history_fragment_warning_label">WARNING</string>
     <string name="history_fragment_danger_label">DANGER</string>
 
-    <string name="current_room_fragment_history_button">Show Room History</string>
+    <string name="current_room_fragment_history_button">History</string>
     <string name="current_room_fragment_no_room_found">currently not in a room</string>
     <string name="current_room_fragment_status_image">status image</string>
     <string name="current_room_fragment_safe_to_stay_text">ℹ️ This room is safe to stay in :)</string>
