@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     tools:context=".ui.history.HistoryFragment">
@@ -27,10 +27,10 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
         android:background="@color/colorPrimary"
+        android:elevation="6dp"
         android:orientation="vertical"
         android:paddingTop="24dp"
-        android:paddingBottom="6dp"
-        android:translationZ="6dp">
+        android:paddingBottom="6dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -45,11 +45,6 @@
             android:translationZ="1dp"
             tools:ignore="HardcodedText,RtlSymmetry,SmallSp" />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/co2LineChart"
-            android:layout_width="match_parent"
-            android:layout_height="325dp" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="63dp"
@@ -62,63 +57,29 @@
             android:textSize="12sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/co2LineChart"
+            android:layout_width="match_parent"
+            android:layout_height="325dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="85dp"
         android:orientation="horizontal"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
         android:paddingStart="12dp"
-        android:paddingEnd="12dp">
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:layout_marginEnd="2dp"
-            android:elevation="3dp"
-            app:cardBackgroundColor="@color/covidbuster_light_blue">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/lastTimeUpdatedTimeTv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="bottom|center"
-                    tools:text="@string/history_fragment_last_time_updated_date"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:layout_weight="2"
-                    />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/history_fragment_last_time_updated_date"
-                    android:gravity="top|center"
-                    android:textColor="@color/teal_200"
-                    android:textStyle="bold"
-                    android:textSize="10sp"
-                    android:layout_weight="3"
-                    tools:ignore="SmallSp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginEnd="2dp"
-            android:backgroundTint="@color/covidbuster_blue">
+            android:backgroundTint="@color/colorPrimary"
+            android:elevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -129,22 +90,22 @@
                     android:id="@+id/lastTimeUpdatedDateTv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:text="@string/history_fragment_last_time_updated_time"
+                    android:layout_weight="1.75"
                     android:gravity="bottom|center"
                     android:textColor="@color/white"
-                    android:textStyle="bold"
                     android:textSize="14sp"
-                    android:layout_weight="2" />
+                    android:textStyle="bold"
+                    tools:text="@string/history_fragment_last_time_updated_date" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/history_fragment_last_time_updated_time"
+                    android:layout_weight="2"
                     android:gravity="top|center"
+                    android:text="@string/history_fragment_last_time_updated_date"
                     android:textColor="@color/teal_200"
-                    android:textStyle="bold"
                     android:textSize="10sp"
-                    android:layout_weight="3"
+                    android:textStyle="bold"
                     tools:ignore="SmallSp" />
 
             </LinearLayout>
@@ -154,9 +115,10 @@
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:layout_marginEnd="2dp"
-            android:backgroundTint="@color/covidbuster_purple">
+            android:backgroundTint="@color/colorPrimary"
+            android:elevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -167,22 +129,60 @@
                     android:id="@+id/lastTimeUpdatedCo2ValueTv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:text="@string/history_fragment_last_time_updated_co2_value"
+                    android:layout_weight="1.75"
                     android:gravity="bottom|center"
                     android:textColor="@color/white"
-                    android:textStyle="bold"
                     android:textSize="14sp"
-                    android:layout_weight="2" />
+                    android:textStyle="bold"
+                    tools:text="@string/history_fragment_last_time_updated_co2_value" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/history_fragment_last_time_updated_co2_value"
+                    android:layout_weight="2"
                     android:gravity="top|center"
+                    android:text="@string/history_fragment_last_time_updated_co2_value"
                     android:textColor="@color/teal_200"
-                    android:textStyle="bold"
                     android:textSize="10sp"
-                    android:layout_weight="3"
+                    android:textStyle="bold"
+                    tools:ignore="SmallSp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:elevation="6dp"
+            app:cardBackgroundColor="@color/colorPrimary">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/lastTimeUpdatedTimeTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.75"
+                    android:gravity="bottom|center"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="@string/history_fragment_last_time_updated_time" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="top|center"
+                    android:text="@string/history_fragment_last_time_updated_time"
+                    android:textColor="@color/teal_200"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
                     tools:ignore="SmallSp" />
 
             </LinearLayout>
@@ -195,13 +195,13 @@
         android:id="@+id/lastTimeUpdatedSafetyStatusTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="SAFE"
+        android:paddingTop="12dp"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:paddingTop="12dp"
         android:textSize="22sp"
         android:textStyle="bold"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText"
+        tools:text="SAFE" />
 
     <TextView
         android:layout_width="match_parent"

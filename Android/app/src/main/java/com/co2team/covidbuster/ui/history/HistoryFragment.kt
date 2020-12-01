@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 
 class HistoryFragment : Fragment(), OnChartValueSelectedListener {
@@ -50,14 +52,14 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     // Constants for limit lines
     private val limitLineDangerThreshold = Constants.DANGEROUS_CO2_THRESHOLD
-    private val limitLineWarningThreshold = Constants.WARNING_CO2_THRESHOLD
+    private val limitLineWarningThreshold = 400 //Constants.WARNING_CO2_THRESHOLD
 
     // "T" is used to split date from time inside a String -> 2007-12-03T10:15:30
     private val localDateTimeDelimiter = "T"
 
     private val backendService = BackendService()
-    private val chartData = ArrayList<RoomCo2Data>()
-    private val roomLabelList = ArrayList<String>()
+    private val roomCo2DataList = ArrayList<RoomCo2Data>() // capturing the LiveData RoomDataList inside a local variable
+    private val roomCo2DataCreatedDataList = ArrayList<String>() // x-Axis values of the Line Chart -> necessary in the IndexValueFormatter
     private var roomIdExtra: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -80,30 +82,29 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         super.onActivityCreated(savedInstanceState)
 
         backendService.readCo2MeasurementsForRoom(roomIdExtra, object : OnDataReceivedCallback {
-            override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
-                chartData.addAll(roomCo2Data)
+            override fun onSuccess(roomCo2DataList: List<RoomCo2Data>) {
+                this@HistoryFragment.roomCo2DataList.addAll(roomCo2DataList)
 
                 val data = createOrLoadLineData()
                 val set = createOrLoadLineDataSet(data)
 
-                for (roomData in roomCo2Data) {
-                    println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + " on date: " + roomData.created)
+                for (roomData in roomCo2DataList) {
                     val yAxisRepresentingCo2Ppm = roomData.co2ppm.toFloat()
 
                     val roomDataCreatedDate: String = roomData.created.toString().substringAfter(localDateTimeDelimiter)
-                    roomLabelList.add(roomDataCreatedDate)
-                    co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomLabelList)
+                    roomCo2DataCreatedDataList.add(roomDataCreatedDate)
 
                     val entry = Entry(set.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
                     co2LineChart.data.addEntry(entry, 0)
                 }
 
-                // Update Line Graph
-                updateUIElementsAccordingToRoomData(roomCo2Data.last(), set)
-
+                co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomCo2DataCreatedDataList)
                 co2LineChart.data.notifyDataChanged()
                 co2LineChart.notifyDataSetChanged()
                 co2LineChart.moveViewToX(co2LineChart.data.entryCount - 7.toFloat())
+
+                // Update Line Graph
+                updateUIElementsAccordingToRoomData(roomCo2DataList.last(), set)
             }
         })
 
@@ -169,12 +170,14 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         lineDataSet.axisDependency = YAxis.AxisDependency.LEFT  // show only the left y axis
 
         lineDataSet.setDrawCircles(true)
-        lineDataSet.circleRadius = 4.5f
-        lineDataSet.setCircleColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent))
-        lineDataSet.setDrawCircleHole(false)
+        lineDataSet.circleRadius = 4f
+        lineDataSet.setCircleColor((ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimary)))
+        lineDataSet.setDrawCircleHole(true)
+        lineDataSet.circleHoleColor = (ContextCompat.getColor(requireActivity().applicationContext, R.color.white))
+        lineDataSet.circleHoleRadius = 2.5f
 
         lineDataSet.highlightLineWidth = 1f
-        lineDataSet.highLightColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent)
+        lineDataSet.highLightColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.transparent_75)
 
         lineDataSet.setDrawValues(false)
 
@@ -270,10 +273,9 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
             set?.fillDrawable = drawable
             set?.color = colorId
-            set?.setCircleColor(colorId)
 
-            val localTimeSubstring = roomCo2Data.created.toString().substringBefore(localDateTimeDelimiter)
-            val localDateSubstring = roomCo2Data.created.toString().substringAfter(localDateTimeDelimiter)
+            val localDateSubstring = roomCo2Data.created.toString().substringBefore(localDateTimeDelimiter)
+            val localTimeSubstring = roomCo2Data.created.toString().substringAfter(localDateTimeDelimiter)
             lastTimeUpdatedDate.text = localTimeSubstring
             lastTimeUpdatedTime.text = localDateSubstring
             lastTimeUpdatedCO2Value.text = roomCo2Data.co2ppm.toString() + " ppm"
@@ -283,7 +285,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        Toast.makeText(requireActivity().applicationContext, e.toString(), Toast.LENGTH_SHORT).show()
+        updateUIElementsAccordingToRoomData(roomCo2DataList[e!!.x.toInt()], co2LineChart.data.getDataSetByIndex(0) as LineDataSet?)
     }
 
     override fun onNothingSelected() {}

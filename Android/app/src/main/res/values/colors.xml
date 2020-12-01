@@ -28,5 +28,6 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="transparent">#00000000</color>
+    <color name="transparent_75">#50FFFFFF</color>
 
 </resources>
