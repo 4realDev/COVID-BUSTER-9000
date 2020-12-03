@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private final BackendService backendService = new BackendService();
     private CurrentRoomViewModel roomViewModel;
     private boolean ignoreValuesForNextTwoSeconds = false;
+    private boolean covidDeviceOnCollect = false;
 
     private ArrayList covidDeviceList = new ArrayList();
 
@@ -64,44 +65,56 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
+            ScanRecord scanRecord = result.getScanRecord();
+
+            if(scanRecord.getServiceData().toString().contains("0000fd6f-0000-1000-8000-00805f9b34fb") && result.getRssi() > -90){
+                if(!covidDeviceList.contains(result.getDevice())){
+                    covidDeviceList.add(result.getDevice());
+                }
+            }
+
+            if(!covidDeviceOnCollect){
+                handler.postDelayed(() -> {
+                    covidDeviceOnCollect = false;
+                    Log.i(TAG, "Number of devices: " + covidDeviceList.size());
+                    covidDeviceList.clear();
+                }, 4000);
+                covidDeviceOnCollect = true;
+            }
+
             if (ignoreValuesForNextTwoSeconds) {
                 return;
             }
 
-            ScanRecord scanRecord = result.getScanRecord();
-            //covid UUID 0000fd6f-0000-1000-8000-00805f9b34fb
-            if(scanRecord.getServiceData().toString().contains("0000fd6f-0000-1000-8000-00805f9b34fb")){
-                if(!covidDeviceList.contains(result.getDevice())){
-                    covidDeviceList.add(result.getDevice());
-                    Log.i(TAG, result.getDevice().toString());
-                }
-                Log.i(TAG, "Number of devices: " + covidDeviceList.size());
+            if(scanRecord.getDeviceName() != null){
+                if(scanRecord.getDeviceName().equals("COVID BUSTER PERIPHERAL")){
+                    if(scanRecord.getManufacturerSpecificData().valueAt(0)[3] == (byte)0x13 && scanRecord.getManufacturerSpecificData().valueAt(0)[2] == (byte)0x37){
+                        if (scanRecord.getManufacturerSpecificData().size() >= 0) {
+                            SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
 
-            }
+                            Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
 
-            if(scanRecord.getDeviceName() == "COVID BUSTER PERIPHERAL"){
-                if (scanRecord.getManufacturerSpecificData().size() >= 0) {
-                    SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
+                            backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
+                            roomViewModel.setRoomName(Utils.Companion.getRoomName(sensorData.getRoomId()));
+                            roomViewModel.setRoomId(sensorData.getRoomId());
+                            roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
 
-                    Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
+                            // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
+                            ignoreValuesForNextTwoSeconds = true;
+                            handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
 
-                    backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
-                    roomViewModel.setRoomName(Utils.Companion.getRoomName(sensorData.getRoomId()));
-                    roomViewModel.setRoomId(sensorData.getRoomId());
-                    roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
-
-                    // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
-                    ignoreValuesForNextTwoSeconds = true;
-                    handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
-
-                    // If no data was read for the last 10s, we assume that we've left the rum. Thus clear the current room data.
-                    handler.postDelayed(() -> {
-                        if(roomViewModel.getLastUpdated().isBefore(LocalDateTime.now().minusSeconds(10))) {
-                            roomViewModel.clearData();
+                            // If no data was read for the last 10s, we assume that we've left the rum. Thus clear the current room data.
+                            handler.postDelayed(() -> {
+                                if(roomViewModel.getLastUpdated().isBefore(LocalDateTime.now().minusSeconds(10))) {
+                                    roomViewModel.clearData();
+                                }
+                            }, 10000);
                         }
-                    }, 10000);
+                    }
                 }
+
             }
+
 
         }
 
@@ -172,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<ScanFilter> filters = new ArrayList<>();
-        //filters.add(new ScanFilter.Builder().setDeviceName("COVID BUSTER PERIPHERAL").build());
         ScanSettings settings = (new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED)).build();
 
         Log.d(TAG, "start scan");
