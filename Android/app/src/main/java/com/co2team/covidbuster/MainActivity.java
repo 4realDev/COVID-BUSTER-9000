@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.ParcelUuid;
 import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,9 +38,11 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private CurrentRoomViewModel roomViewModel;
     private boolean ignoreValuesForNextTwoSeconds = false;
 
+    private ArrayList covidDeviceList = new ArrayList();
+
     private final ScanCallback mScanCallback = new ScanCallback() {
 
         @Override
@@ -64,28 +69,40 @@ public class MainActivity extends AppCompatActivity {
             }
 
             ScanRecord scanRecord = result.getScanRecord();
+            //covid UUID 0000fd6f-0000-1000-8000-00805f9b34fb
+            if(scanRecord.getServiceData().toString().contains("0000fd6f-0000-1000-8000-00805f9b34fb")){
+                if(!covidDeviceList.contains(result.getDevice())){
+                    covidDeviceList.add(result.getDevice());
+                    Log.i(TAG, result.getDevice().toString());
+                }
+                Log.i(TAG, "Number of devices: " + covidDeviceList.size());
 
-            if (scanRecord.getManufacturerSpecificData().size() >= 0) {
-                SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
-
-                Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
-
-                backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
-                roomViewModel.setRoomName(Utils.Companion.getRoomName(sensorData.getRoomId()));
-                roomViewModel.setRoomId(sensorData.getRoomId());
-                roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
-
-                // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
-                ignoreValuesForNextTwoSeconds = true;
-                handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
-
-                // If no data was read for the last 10s, we assume that we've left the rum. Thus clear the current room data.
-                handler.postDelayed(() -> {
-                    if(roomViewModel.getLastUpdated().isBefore(LocalDateTime.now().minusSeconds(10))) {
-                        roomViewModel.clearData();
-                    }
-                }, 10000);
             }
+
+            if(scanRecord.getDeviceName() == "COVID BUSTER PERIPHERAL"){
+                if (scanRecord.getManufacturerSpecificData().size() >= 0) {
+                    SensorData sensorData = SensorData.processPayload(scanRecord.getManufacturerSpecificData().valueAt(0));
+
+                    Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
+
+                    backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
+                    roomViewModel.setRoomName(Utils.Companion.getRoomName(sensorData.getRoomId()));
+                    roomViewModel.setRoomId(sensorData.getRoomId());
+                    roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
+
+                    // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
+                    ignoreValuesForNextTwoSeconds = true;
+                    handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
+
+                    // If no data was read for the last 10s, we assume that we've left the rum. Thus clear the current room data.
+                    handler.postDelayed(() -> {
+                        if(roomViewModel.getLastUpdated().isBefore(LocalDateTime.now().minusSeconds(10))) {
+                            roomViewModel.clearData();
+                        }
+                    }, 10000);
+                }
+            }
+
         }
 
         @Override
@@ -155,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<ScanFilter> filters = new ArrayList<>();
-        filters.add(new ScanFilter.Builder().setDeviceName("COVID BUSTER PERIPHERAL").build());
+        //filters.add(new ScanFilter.Builder().setDeviceName("COVID BUSTER PERIPHERAL").build());
         ScanSettings settings = (new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_BALANCED)).build();
 
         Log.d(TAG, "start scan");
