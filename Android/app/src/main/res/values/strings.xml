@@ -1,21 +1,28 @@
 <resources>
     <string name="app_name">Covid Buster</string>
-    <string name="history_fragment_last_time_updated_date">Date:</string>
-    <string name="history_fragment_last_time_updated_time">Time:</string>
-    <string name="history_fragment_last_time_updated_co2_value">CO2 value:</string>
+
+    <string name="history_fragment_title">HISTORY</string>
+    <string name="history_fragment_safe_status">SAFETY STATUS</string>
+
+    <string name="history_fragment_last_time_updated_date">Date</string>
+    <string name="history_fragment_last_time_updated_time">Time</string>
+    <string name="history_fragment_last_time_updated_co2_value">CO2 value</string>
     <string name="history_fragment_last_time_updated_safety_status">Safety status:</string>
 
     <string name="history_fragment_no_data_text">Loading room data…</string>
 
-    <string name="history_fragment_safe_label">Safe</string>
-    <string name="history_fragment_warning_label">Warning</string>
-    <string name="history_fragment_danger_label">Danger</string>
+    <string name="history_fragment_safe_label">SAFE</string>
+    <string name="history_fragment_warning_label">WARNING</string>
+    <string name="history_fragment_danger_label">DANGER</string>
 
     <string name="current_room_fragment_history_button">History</string>
-    <string name="current_room_fragment_co2_level_label">Current co2 level: %1$s</string>
-    <string name="current_room_fragment_safe">safe</string>
-    <string name="current_room_fragment_dangerous">dangerous</string>
-    <string name="current_room_fragment_warning">warning</string>
-    <string name="status_image">status image</string>
-    <string name="room_icon">Room Icon</string>
+    <string name="current_room_fragment_no_room_found">currently not in a room</string>
+    <string name="current_room_fragment_status_image">status image</string>
+    <string name="current_room_fragment_safe_to_stay_text">ℹ️ This room is safe to stay in :)</string>
+    <string name="current_room_fragment_danger_text">ℹ️ Please ventilate this room immediately! The measured co2 levels indicate, that there was no exchange of fresh air inside this room.</string>
+    <string name="current_room_fragment_warning_text">ℹ️ The air is getting thick in here. Consider ventilating this room to keep the infection rate low.</string>
+    <string name="current_room_fragment_co2_concentration">Current CO2 concentration in ppm</string>
+
+    <string name="room_list_room_icon_description">Room Icon</string>
+
 </resources>

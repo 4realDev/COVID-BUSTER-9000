@@ -10,18 +10,18 @@ import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomData
 
 class RoomListArrayAdapter(private val context: Context,
-                           private val dataSource: Array<RoomData?>) : BaseAdapter() {
+                           private val dataSource: Array<RoomData>) : BaseAdapter() {
 
     override fun getCount(): Int {
         return dataSource.size
     }
 
     override fun getItem(itemId: Int): Any {
-        return dataSource[itemId]!!
+        return dataSource[itemId]
     }
 
     override fun getItemId(itemId: Int): Long {
-        return dataSource[itemId]!!.id.toLong()
+        return dataSource[itemId].id.toLong()
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

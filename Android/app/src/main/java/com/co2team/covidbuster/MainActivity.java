@@ -32,6 +32,7 @@ import com.co2team.covidbuster.ui.TabAdapter;
 import com.co2team.covidbuster.ui.currentroom.CurrentRoomFragment;
 import com.co2team.covidbuster.ui.currentroom.CurrentRoomViewModel;
 import com.co2team.covidbuster.ui.roomlist.RoomListFragment;
+import com.co2team.covidbuster.util.Utils;
 import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,15 +48,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsScanning = false;
     private BluetoothLeScanner mScanner;
     private final HandlerThread scanningThread = new HandlerThread("ScanningThread");
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private final BackendService backendService = new BackendService();
-
     private CurrentRoomViewModel roomViewModel;
-
     private boolean ignoreValuesForNextTwoSeconds = false;
 
     private final ScanCallback mScanCallback = new ScanCallback() {
-
 
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
@@ -72,12 +71,20 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Scanning Room: " + sensorData.getRoomId() + "; co2: " + sensorData.getCo2Value() + " Temp: " + sensorData.getTemperatureValue() + " Humid: " + sensorData.getHumidityValue() + " Battery: " + sensorData.getBatteryValue());
 
                 backendService.uploadCo2Measurement(sensorData.getCo2Value(), sensorData.getRoomId());
+                roomViewModel.setRoomName(Utils.Companion.getRoomName(sensorData.getRoomId()));
+                roomViewModel.setRoomId(sensorData.getRoomId());
                 roomViewModel.setRoomData(new RoomCo2Data(sensorData.getCo2Value(), LocalDateTime.now()));
 
                 // Advertisement gets executed many (~5) times within a short period. We ignore all but one value within a 2 second period.
                 ignoreValuesForNextTwoSeconds = true;
-                final Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(() -> ignoreValuesForNextTwoSeconds = false, 2000);
+
+                // If no data was read for the last 10s, we assume that we've left the rum. Thus clear the current room data.
+                handler.postDelayed(() -> {
+                    if(roomViewModel.getLastUpdated().isBefore(LocalDateTime.now().minusSeconds(10))) {
+                        roomViewModel.clearData();
+                    }
+                }, 10000);
             }
         }
 

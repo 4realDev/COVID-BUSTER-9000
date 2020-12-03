@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +14,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.co2team.covidbuster.R
 import com.co2team.covidbuster.model.RoomCo2Data
 import com.co2team.covidbuster.service.BackendService
 import com.co2team.covidbuster.service.OnDataReceivedCallback
+import com.co2team.covidbuster.ui.roomlist.EXTRA_ROOM_ID
+import com.co2team.covidbuster.util.Constants
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -24,15 +28,21 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 
 class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     companion object {
-        fun newInstance() = HistoryFragment()
+        fun newInstance(roomId: Int): HistoryFragment{
+            val fragment = HistoryFragment()
+            val args = Bundle()
+            args.putInt(EXTRA_ROOM_ID, roomId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
-    private lateinit var viewModel: HistoryViewModel
     private lateinit var co2LineChart: LineChart
 
     private lateinit var lastTimeUpdatedTime: TextView
@@ -41,20 +51,23 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     private lateinit var lastTimeUpdatedSafetyStatus: TextView
 
     // Constants for limit lines
-    private val limitLineDangerThreshold = 395.0f
-    private val limitLineWarningThreshold = 375.0f
-    private val limitLineSafeThreshold = 325.0f
+    private val limitLineDangerThreshold = Constants.DANGEROUS_CO2_THRESHOLD
+    private val limitLineWarningThreshold = Constants.WARNING_CO2_THRESHOLD
 
     // "T" is used to split date from time inside a String -> 2007-12-03T10:15:30
     private val localDateTimeDelimiter = "T"
 
     private val backendService = BackendService()
-    private val chartData = ArrayList<RoomCo2Data>()
-    private val roomLabelList = ArrayList<String>()
+    private val roomCo2DataList = ArrayList<RoomCo2Data>() // capturing the LiveData RoomDataList inside a local variable
+    private val roomCo2DataCreatedDataList = ArrayList<String>() // x-Axis values of the Line Chart -> necessary in the IndexValueFormatter
+    private var roomIdExtra: Int = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.history_fragment, container, false)
+
+        val args = arguments
+        roomIdExtra = args!!.getInt(EXTRA_ROOM_ID)
 
         co2LineChart = view.findViewById(R.id.co2LineChart)
         lastTimeUpdatedTime = view.findViewById(R.id.lastTimeUpdatedTimeTv)
@@ -67,39 +80,31 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(HistoryViewModel::class.java)
-        // TODO: Use the ViewModel
 
-        // TODO: insert the correct room ID
-        backendService.readCo2MeasurementsForRoom(1, object : OnDataReceivedCallback {
-            @SuppressLint("SetTextI18n")
-            override fun onSuccess(roomCo2Data: List<RoomCo2Data>) {
-                chartData.addAll(roomCo2Data)
+        backendService.readCo2MeasurementsForRoom(roomIdExtra, object : OnDataReceivedCallback {
+            override fun onSuccess(roomCo2DataList: List<RoomCo2Data>) {
+                this@HistoryFragment.roomCo2DataList.addAll(roomCo2DataList)
 
                 val data = createOrLoadLineData()
                 val set = createOrLoadLineDataSet(data)
 
-                for (roomData in roomCo2Data) {
-                    println("I have new history data from the backend. Co2: " + chartData.first().co2ppm + " on date: " + roomData.created)
+                for (roomData in roomCo2DataList) {
                     val yAxisRepresentingCo2Ppm = roomData.co2ppm.toFloat()
 
                     val roomDataCreatedDate: String = roomData.created.toString().substringAfter(localDateTimeDelimiter)
-                    roomLabelList.add(roomDataCreatedDate)
-                    co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomLabelList)
+                    roomCo2DataCreatedDataList.add(roomDataCreatedDate)
 
                     val entry = Entry(set.entryCount.toFloat(), yAxisRepresentingCo2Ppm)
                     co2LineChart.data.addEntry(entry, 0)
                 }
 
-                lastTimeUpdatedDate.text = getString(R.string.history_fragment_last_time_updated_time) + " " + roomCo2Data.last().created.toString().substringBefore(localDateTimeDelimiter)
-                lastTimeUpdatedTime.text = getString(R.string.history_fragment_last_time_updated_date) + " " + roomCo2Data.last().created.toString().substringAfter(localDateTimeDelimiter)
-                lastTimeUpdatedCO2Value.text = getString(R.string.history_fragment_last_time_updated_co2_value) + " " + roomCo2Data.last().co2ppm.toString() + " ppm"
-
-                setColorAndSafetyStatusAccordingLatestCo2Measure(roomCo2Data.last().co2ppm.toFloat(), co2LineChart.data.getDataSetByIndex(0) as LineDataSet?)
-
+                co2LineChart.xAxis.valueFormatter = IndexAxisValueFormatter(roomCo2DataCreatedDataList)
                 co2LineChart.data.notifyDataChanged()
                 co2LineChart.notifyDataSetChanged()
                 co2LineChart.moveViewToX(co2LineChart.data.entryCount - 7.toFloat())
+
+                // Update Line Graph
+                updateUIElementsAccordingToRoomData(roomCo2DataList.last(), set)
             }
         })
 
@@ -144,7 +149,7 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         co2LineChart.setScaleEnabled(false)
         co2LineChart.isDragEnabled = true
 
-        co2LineChart.setOnChartValueSelectedListener(this);
+        co2LineChart.setOnChartValueSelectedListener(this)
 
         // enable value highlighting
         co2LineChart.isHighlightPerTapEnabled = true
@@ -165,12 +170,14 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
         lineDataSet.axisDependency = YAxis.AxisDependency.LEFT  // show only the left y axis
 
         lineDataSet.setDrawCircles(true)
-        lineDataSet.circleRadius = 4.5f
-        lineDataSet.setCircleColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent))
-        lineDataSet.setDrawCircleHole(false)
+        lineDataSet.circleRadius = 4f
+        lineDataSet.setCircleColor((ContextCompat.getColor(requireActivity().applicationContext, R.color.colorPrimary)))
+        lineDataSet.setDrawCircleHole(true)
+        lineDataSet.circleHoleColor = (ContextCompat.getColor(requireActivity().applicationContext, R.color.white))
+        lineDataSet.circleHoleRadius = 2.5f
 
         lineDataSet.highlightLineWidth = 1f
-        lineDataSet.highLightColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.colorAccent)
+        lineDataSet.highLightColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.transparent_75)
 
         lineDataSet.setDrawValues(false)
 
@@ -210,21 +217,16 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
 
     private fun setupLimitLines() {
         co2LineChart.axisLeft.removeAllLimitLines()
-        val dangerLimit = LimitLine(limitLineDangerThreshold)
+        val dangerLimit = LimitLine(limitLineDangerThreshold.toFloat())
         dangerLimit.lineWidth = 1f
         dangerLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_danger_zone_red)
 
-        val warningLimit = LimitLine(limitLineWarningThreshold)
+        val warningLimit = LimitLine(limitLineWarningThreshold.toFloat())
         warningLimit.lineWidth = 1f
         warningLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_warning_zone_yellow)
 
-        val safeLimit = LimitLine(limitLineSafeThreshold)
-        safeLimit.lineWidth = 1f
-        safeLimit.lineColor = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_safe_zone_green)
-
         co2LineChart.axisLeft.addLimitLine(dangerLimit)
         co2LineChart.axisLeft.addLimitLine(warningLimit)
-        co2LineChart.axisLeft.addLimitLine(safeLimit)
     }
 
     private fun setupLegend() {
@@ -244,36 +246,46 @@ class HistoryFragment : Fragment(), OnChartValueSelectedListener {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setColorAndSafetyStatusAccordingLatestCo2Measure(co2Measure: Float, set: LineDataSet?) {
-        val drawable: Drawable
-        val colorId: Int
-        val safetyStatus: String
-        when {
-            co2Measure > limitLineDangerThreshold -> {
-                drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_danger)!!
-                colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_danger_zone_red)
-                safetyStatus = getString(R.string.history_fragment_danger_label)
+    private fun updateUIElementsAccordingToRoomData(roomCo2Data: RoomCo2Data, set: LineDataSet?) {
+        Handler(Looper.getMainLooper()).post {
+
+            val drawable: Drawable
+            val colorId: Int
+            val safetyStatus: String
+
+            when {
+                roomCo2Data.co2ppm > limitLineDangerThreshold -> {
+                    drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_danger)!!
+                    colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_danger_zone_red)
+                    safetyStatus = getString(R.string.history_fragment_danger_label)
+                }
+                roomCo2Data.co2ppm > limitLineWarningThreshold -> {
+                    drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_warning)!!
+                    colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_warning_zone_yellow)
+                    safetyStatus = getString(R.string.history_fragment_warning_label)
+                }
+                else -> {
+                    drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_safe)!!
+                    colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_safe_zone_green)
+                    safetyStatus = getString(R.string.history_fragment_safe_label)
+                }
             }
-            co2Measure > limitLineWarningThreshold -> {
-                drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_warning)!!
-                colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_warning_zone_yellow)
-                safetyStatus = getString(R.string.history_fragment_warning_label)
-            }
-            else -> {
-                drawable = ContextCompat.getDrawable(requireActivity().applicationContext, R.drawable.fade_accent_safe)!!
-                colorId = ContextCompat.getColor(requireActivity().applicationContext, R.color.covidbuster_safe_zone_green)
-                safetyStatus = getString(R.string.history_fragment_safe_label)
-            }
+
+            set?.fillDrawable = drawable
+            set?.color = colorId
+
+            val localDateSubstring = roomCo2Data.created.toString().substringBefore(localDateTimeDelimiter)
+            val localTimeSubstring = roomCo2Data.created.toString().substringAfter(localDateTimeDelimiter)
+            lastTimeUpdatedDate.text = localTimeSubstring
+            lastTimeUpdatedTime.text = localDateSubstring
+            lastTimeUpdatedCO2Value.text = roomCo2Data.co2ppm.toString() + " ppm"
+            lastTimeUpdatedSafetyStatus.text = safetyStatus
+            lastTimeUpdatedSafetyStatus.setTextColor(colorId)
         }
-        set?.fillDrawable = drawable
-        set?.color = colorId
-        set?.setCircleColor(colorId)
-        lastTimeUpdatedSafetyStatus.text = getString(R.string.history_fragment_last_time_updated_safety_status) + " " + safetyStatus
-        lastTimeUpdatedSafetyStatus.setTextColor(colorId)
     }
 
     override fun onValueSelected(e: Entry?, h: Highlight?) {
-        Toast.makeText(requireActivity().applicationContext, e.toString(), Toast.LENGTH_SHORT).show()
+        updateUIElementsAccordingToRoomData(roomCo2DataList[e!!.x.toInt()], co2LineChart.data.getDataSetByIndex(0) as LineDataSet?)
     }
 
     override fun onNothingSelected() {}
