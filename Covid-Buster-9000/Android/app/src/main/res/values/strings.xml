@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Covid Buster</string>
+
+    <string name="history_fragment_title">HISTORY</string>
+    <string name="history_fragment_safe_status">SAFETY STATUS</string>
+
+    <string name="history_fragment_last_time_updated_date">Date</string>
+    <string name="history_fragment_last_time_updated_time">Time</string>
+    <string name="history_fragment_last_time_updated_co2_value">CO2 value</string>
+    <string name="history_fragment_last_time_updated_safety_status">Safety status:</string>
+
+    <string name="history_fragment_no_data_text">Loading room data…</string>
+
+    <string name="history_fragment_safe_label">SAFE</string>
+    <string name="history_fragment_warning_label">WARNING</string>
+    <string name="history_fragment_danger_label">DANGER</string>
+    <string name="history_fragment_ppm">%1$s ppm</string>
+    <string name="history_fragment_status_unknown">unknown</string>
+
+    <string name="current_room_fragment_history_button">History</string>
+    <string name="current_room_fragment_no_room_found">Currently not in a room</string>
+    <string name="current_room_fragment_status_image">status image</string>
+    <string name="current_room_fragment_safe_to_stay_text">The CO2 concentration is in the recommended area below 1000 ppm. </string>
+    <string name="current_room_fragment_danger_text">The CO2 concentration has reached a dangerous ppm value. Please immediately leave the room and ventilate until a value below 1000 ppm is reached.</string>
+    <string name="current_room_fragment_warning_text">The air is getting thick in here. Please consider ventilating the room to keep the CO2 concentration below 1000 ppm.</string>
+    <string name="current_room_fragment_co2_concentration">CO2 concentration in ppm</string>
+    <string name="current_room_fragment_number_of_active_swiss_covid_apps">Active Covid Apps</string>
+
+    <string name="room_list_room_icon_description">Room Icon</string>
+
+    <string name="channel_name">Danger Notification</string>
+    <string name="channel_description">Push notification when the dangerous co2 threshold is crossed</string>
+
+    <string name="notification_title">Dangerous CO2 Concentration</string>
+    <string name="notification_content">Leave the room and ventilate!</string>
+    <string name="current_room_fragment_initial_covid_app_value">0</string>
+    <string name="current_room_fragment_initial_value_covid_apps">0</string>
+
+</resources>
