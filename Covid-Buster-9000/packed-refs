@@ -1,0 +1,5 @@
+# pack-refs with: peeled fully-peeled sorted 
+931de986e8b23e0c6f4b0e8e40f8f982b62081c2 refs/heads/dev_covidPack
+34de960155bfdc488ad5b93ab8adc434a6bab986 refs/heads/dev_nrf
+665dbbe7a4e934a696f97ab1576cf611940ff0e1 refs/heads/main
+76659d354e2f7ac9e9954bc6ceb464ae7d73b3a1 refs/pull/1/head
