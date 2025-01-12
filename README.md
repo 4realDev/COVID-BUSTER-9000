@@ -1,4 +1,11 @@
 # Covid Buster 9000
+## Preview
+![covid_buster_tech_stack](https://github.com/user-attachments/assets/c96b3b3c-a070-4f20-94ea-5d46b4e53d79)
+![covid_buster_screens_real](https://github.com/user-attachments/assets/04f96d1b-7004-434d-9d65-ae4946dfce2f)
+![covid_buster_screens](https://github.com/user-attachments/assets/38dbd5fe-bf17-4174-a2b5-4f28c56bbf63)
+
+## Preview Video
+https://www.youtube.com/watch?v=uX1R_b5_JQI
 
 ## Agile Board
 * Team: https://trello.com/tsm_mobcomco2team
